@@ -35,9 +35,8 @@ curl localhost:3000
 docker stop wiki
 ```
 
-
 https://www.digitalocean.com/community/tutorials/customizing-go-binaries-with-build-tags
 
-## Go (Golang) GOOS and GOARCH
+# Go (Golang) GOOS and GOARCH
 
 https://gist.github.com/asukakenji/f15ba7e588ac42795f421b48b8aede63#go-golang-goos-and-goarch
