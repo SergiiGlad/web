@@ -1,4 +1,4 @@
 FROM scratch
-ADD ./webwiki /webwiki
+ADD ./wiki /wiki
 EXPOSE 3000
-ENTRYPOINT ["/webwiki"]
+ENTRYPOINT ["/wiki"]

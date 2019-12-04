@@ -1,4 +1,4 @@
-## Simple Web Server
+## Go Simple Web Server in docker container
 
 ### go building example
 https://blog.codeship.com/building-minimal-docker-containers-for-go-applications/
@@ -21,13 +21,20 @@ RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/hello
 
 ### docker building
 ```sh
-docker build -t sergiiglad/wiki:1.0 .
+docker build -t sergeyglad/wiki:1 .
+
+docker push sergeyglad/wiki:1
 ```
 
 docker run
 ```sh
-docker run --rm -d -p 3000:3000 sergeyglad/webwiki:1
+docker run --name wiki --rm -d -p 3000:3000 sergeyglad/wiki:1
+
+curl localhost:3000
+
+docker stop wiki
 ```
+
 
 https://www.digitalocean.com/community/tutorials/customizing-go-binaries-with-build-tags
 
