@@ -21,7 +21,7 @@ RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/hello
 
 ### docker building
 ```sh
-docker build -t sergiiglad/webwiki:1 .
+docker build -t sergiiglad/wiki:1.0 .
 ```
 
 docker run
