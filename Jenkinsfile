@@ -10,12 +10,17 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building..'
+                container('jnlp-slave-docker') {
+                    sh 'echo Building'
+                    sh 'docker info'
+                }    
             }
         }
         stage('Test') {
             steps {
-                echo 'Testing..'
+                container('jnlp-slave-docker') {
+                    echo 'go testing..'
+                }    
             }
         }
         stage('Deploy') {
