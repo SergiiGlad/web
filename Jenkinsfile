@@ -2,10 +2,8 @@
 pipeline {
      agent{
         kubernetes {
-            label 'jenkins-slave-docker'
-            label jenkins: "slave"
-            label jenkins/jenkins-jenkins-slave: "true"
-            defaultContainer 'jenkins/jnlp-slave:3.27-1'
+            label 'jenkins-slave-cicd-golang'
+           
         }
     }
 
