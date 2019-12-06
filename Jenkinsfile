@@ -2,8 +2,6 @@
 pipeline {
      agent{
         kubernetes {
-            label 'jenkins-slave-cicd-golang'
-           
         }
     }
 
