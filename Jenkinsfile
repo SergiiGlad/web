@@ -1,9 +1,11 @@
 #!/usr/bin/env groovy
 pipeline {
     agent{
-        kubernetes {}
-
+        kubernetes { 
+            yamlFile 'pod-dind-golang.yaml'
         }
+
+    }
 
     stages {
         stage('Build') {
