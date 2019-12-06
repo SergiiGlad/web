@@ -1,0 +1,71 @@
+---
+apiVersion: "v1"
+kind: "Pod"
+metadata:
+  annotations: {}
+  labels:
+    jenkins: "slave"
+    jenkins/jenkins-jenkins-slave: "true"
+  name: "default-m1qhm"
+spec:
+  containers:
+  - args:
+    - "--storage-driver=vfs"
+    image: "docker:dind"
+    imagePullPolicy: "Always"
+    name: "jnlp-slave-docker"
+    resources:
+      limits: {}
+      requests: {}
+    securityContext:
+      privileged: true
+    tty: true
+    volumeMounts:
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+    workingDir: "/home/jenkins/agent"
+  - args:
+    - "********"
+    - "default-m1qhm"
+    env:
+    - name: "JENKINS_SECRET"
+      value: "********"
+    - name: "JENKINS_TUNNEL"
+      value: "jenkins-agent:50000"
+    - name: "JENKINS_AGENT_NAME"
+      value: "default-m1qhm"
+    - name: "JENKINS_NAME"
+      value: "default-m1qhm"
+    - name: "JENKINS_AGENT_WORKDIR"
+      value: "/home/jenkins/agent"
+    - name: "JENKINS_URL"
+      value: "http://jenkins.jenkins.svc.cluster.local:8080"
+    image: "jenkins/jnlp-slave:3.27-1"
+    imagePullPolicy: "IfNotPresent"
+    name: "jnlp"
+    resources:
+      limits:
+        memory: "2Gi"
+        cpu: "512m"
+      requests:
+        memory: "512Mi"
+        cpu: "512m"
+    securityContext:
+      privileged: false
+    tty: false
+    volumeMounts:
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+    workingDir: "/home/jenkins/agent"
+  hostNetwork: false
+  nodeSelector:
+    beta.kubernetes.io/os: "linux"
+  restartPolicy: "Never"
+  securityContext: {}
+  serviceAccount: "default"
+  volumes:
+  - emptyDir:
+      medium: ""
+    name: "workspace-volume"
