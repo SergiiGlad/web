@@ -2,7 +2,7 @@
 pipeline {
     agent{
         kubernetes { 
-          
+            yamlFile 'pod-dind-golang.yaml'
         }
 
     }

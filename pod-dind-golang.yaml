@@ -14,9 +14,6 @@ spec:
     image: "docker:dind"
     imagePullPolicy: "Always"
     name: "jnlp-slave-docker"
-    resources:
-      limits: {}
-      requests: {}
     securityContext:
       privileged: true
     tty: true
