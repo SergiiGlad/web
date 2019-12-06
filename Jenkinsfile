@@ -1,10 +1,6 @@
 #!/usr/bin/env groovy
 pipeline {
-     agent{
-        kubernetes {
-        }
-    }
-
+    
     stages {
         stage('Build') {
             steps {
