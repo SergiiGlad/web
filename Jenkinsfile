@@ -1,16 +1,23 @@
 #!/usr/bin/env groovy
 pipeline {
     agent{
-        kubernetes { 
-            yamlFile 'pod-dind-golang.yaml'
-        }
-
+      agent {
+    kubernetes {
+      yamlFile 'podTemplWorker.yaml'
+    }
+  }
+ 
     }
 
     stages {
-        stage('Build') {
+        stage('Build Golang project') {
+          steps{
+            //go build
+          }
+        }
+        stage('Build Dockerfile') {
             steps {
-                container('jnlp-slave-docker') {
+                container('docker') {
                     sh 'echo Building'
                     sh 'docker info'
                 }    
@@ -18,7 +25,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                container('jnlp-slave-docker') {
+                container('docker') {
                     echo 'go testing..'
                 }    
             }
