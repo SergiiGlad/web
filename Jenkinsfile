@@ -6,8 +6,6 @@ pipeline {
     }
   }
  
-    }
-
     stages {
         stage('Build Golang project') {
           steps{
