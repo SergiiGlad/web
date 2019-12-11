@@ -19,7 +19,10 @@ RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o main .
 FROM scratch
 
 # Copy the Pre-built binary file from the previous stage
-COPY --from=builder /build/main .
+# Set up the app to run as a non-user
+# User ID 65534 is usually user 'nobody'
+COPY --chown=65534:0 --from=builder /build/main main
+USER 65534
 
 # Expose port 3000 to the outside world
 EXPOSE 3000
