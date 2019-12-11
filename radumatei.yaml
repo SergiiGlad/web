@@ -23,3 +23,8 @@ podTemplate(label: label, containers: [
       }
   }
 }
+
+For build and push of Docker images there are some interesting possibilities on the horizon for standalone, daemon-less, unprivileged Dockerfile and OCI compatible container image builder:
+i. img - can’t run in a container without some major work-arounds - yet
+ii. buildah - must use privileged volumes
+iii. kaniko - must run as root in the container

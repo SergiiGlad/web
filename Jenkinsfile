@@ -16,7 +16,7 @@ pipeline {
             steps {
                 container('docker') {
                     sh 'echo Building'
-                    sh 'docker info'
+                    sh 'docker version'
                 }    
             }
         }
