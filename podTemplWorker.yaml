@@ -51,13 +51,7 @@ spec:
     image: achlanevenson/k8s-kubectl:v1.8.8   
     command: ['cat']
     tty: true
-    resources:
-      limits:
-        memory: "128Gi"
-        cpu: "128m"
-      requests:
-        memory: "128Mi"
-        cpu: "128m"  
+    
 
   
   volumes:
