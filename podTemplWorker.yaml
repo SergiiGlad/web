@@ -34,9 +34,16 @@ spec:
       name: "workspace-volume"
       readOnly: false
   - name: docker
-    image: docker:19.03.1-dind
+    image: docker:19.03.3-dind
     securityContext:
       privileged: true
+    resources:
+     limits:
+       memory: "512Gi"
+       cpu: "512m"
+     requests:
+       memory: "512Mi"
+       cpu: "512m"  
     env:
       - name: DOCKER_TLS_CERTDIR
         value: ""  

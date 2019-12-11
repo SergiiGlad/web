@@ -9,14 +9,16 @@ pipeline {
     stages {
         stage('Build Golang project') {
           steps{
-            sh 'echo "go build"'
+            sh 'echo "go test"'
           }
         }
         stage('Build Dockerfile') {
             steps {
                 container('docker') {
-                    sh 'echo Building'
-                    sh 'docker version'
+                    sh 'echo Building Dockerfile'
+                    sh 'docker build -t wiki .'
+                    sh 'docker push wiki'
+                    
                 }    
             }
         }
