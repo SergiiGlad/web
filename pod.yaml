@@ -1,0 +1,40 @@
+---
+apiVersion: "v1"
+kind: "Pod"
+metadata:
+  annotations: {}
+  labels:
+    jenkins: "slave"
+    jenkins/jenkins-jenkins-slave: "true"
+  name: "default-672h2"
+spec:
+  containers:
+  - args:
+    - "--storage-driver=vfs"
+    env:
+    - name: "DOCKER_HOST"
+      value: "tcp://localhost:2375"
+    image: "docker:19.03.1-dind"
+    imagePullPolicy: "Always"
+    name: "docker"
+    resources:
+      limits: {}
+      requests: {}
+    securityContext:
+      privileged: true
+    tty: true
+    volumeMounts:
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+    workingDir: "/home/jenkins/agent"
+  hostNetwork: false
+  nodeSelector:
+    beta.kubernetes.io/os: "linux"
+  restartPolicy: "Never"
+  securityContext: {}
+  serviceAccount: "default"
+  volumes:
+  - emptyDir:
+      medium: ""
+    name: "workspace-volume"

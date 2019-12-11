@@ -1,0 +1,30 @@
+def label = "worker-${UUID.randomUUID().toString()}"
+
+podTemplate(label: label, containers: [
+  containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.8.8', command: 'cat', ttyEnabled: true)
+ ]) {
+  node(label) {
+
+
+    stage('Apply Kubernetes files') {
+            container('kubectl') {
+                git([url: 'https://github.com/SergiiGlad/web.git', branch: 'master']) 
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                sh 'kubectl cluster-info'
+
+                sh 'env'
+
+                sh 'kubectl cp podTemplWorker.yaml jenkins/jenkins-68c6f4cfbc-hqf7b:/var/jenkins_home/jobs/multibranchtempl/podTemplWorker.yaml'
+	          
+
+                } 
+           }
+        
+      }
+  }
+}
+
+For build and push of Docker images there are some interesting possibilities on the horizon for standalone, daemon-less, unprivileged Dockerfile and OCI compatible container image builder:
+i. img - can’t run in a container without some major work-arounds - yet
+ii. buildah - must use privileged volumes
+iii. kaniko - must run as root in the container
