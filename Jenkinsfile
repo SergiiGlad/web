@@ -40,7 +40,7 @@ pipeline {
                  withKubeConfig([credentialsId: 'kubeconfig']) {
                  sh 'kubectl run wiki --image=sergeyglad/wiki -n jenkins'
                  } 
-                
+               }
             }
         }
     }
