@@ -16,7 +16,7 @@ pipeline {
             steps {
                 container('docker') {
                     sh 'echo Building Dockerfile'
-                    sh 'docker build -t wiki .'
+                    sh 'docker build -t sergeyglad/wiki .'
 
                     withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
                         sh 'docker login'
