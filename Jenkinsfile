@@ -19,7 +19,7 @@ pipeline {
                     sh 'docker build -t sergeyglad/wiki .'
 
                     withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-                        sh 'docker login'
+                        sh 'docker push sergeyglad/wiki'
                     }
                     
                     
