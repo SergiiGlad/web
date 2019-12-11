@@ -36,6 +36,11 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
+                container('kubectl') {
+                 withKubeConfig([credentialsId: 'kubeconfig']) {
+                 sh 'kubectl run wiki --image=sergeyglad/wiki -n jenkins'
+                 } 
+                
             }
         }
     }
