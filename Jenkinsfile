@@ -17,7 +17,11 @@ pipeline {
                 container('docker') {
                     sh 'echo Building Dockerfile'
                     sh 'docker build -t wiki .'
-                    sh 'docker push wiki'
+
+                    withDockerRegistry([credentialsId: 'docker-api-key']) {
+                        sh 'docker push wiki'
+                    }
+                    
                     
                 }    
             }
