@@ -42,9 +42,6 @@ spec:
         value: ""  
   - name: helm
     image: lachlanevenson/k8s-helm:v2.16.1  
-    tty: true
-    command:
-      - "cat"
   volumes:
   - emptyDir:
       medium: ""
