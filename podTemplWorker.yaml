@@ -34,26 +34,17 @@ spec:
       name: "workspace-volume"
       readOnly: false
   - name: docker
-    image: docker:19.03.3-dind
+    image: docker:stable-dind
     securityContext:
       privileged: true
-    resources:
-     limits:
-       memory: "512Gi"
-       cpu: "512m"
-     requests:
-       memory: "512Mi"
-       cpu: "512m"  
     env:
       - name: DOCKER_TLS_CERTDIR
         value: ""  
-  - name: kubectl
-    image: achlanevenson/k8s-kubectl:v1.8.8   
-    command: ['cat']
+  - name: helm
+    image: lachlanevenson/k8s-helm:v2.16.1  
     tty: true
-    
-
-  
+    command:
+      - "cat"
   volumes:
   - emptyDir:
       medium: ""
