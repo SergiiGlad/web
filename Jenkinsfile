@@ -21,7 +21,7 @@ pipeline {
                 container('docker') {
                     sh 'echo Building Dockerfile'
 
-                    docker.Image.build
+                    //docker.Image.build
                     sh 'docker build -t DOCKER_IMAGE_NAME .'
 
                     withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
