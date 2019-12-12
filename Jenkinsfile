@@ -6,8 +6,8 @@ pipeline {
     }
   }
     environment {
-            //be sure to replace "sergiiglad" with your own Docker Hub username
-            DOCKER_IMAGE_NAME = "sergiiglad/wiki"
+            //be sure to replace "sergeyglad" with your own Docker Hub username
+            DOCKER_IMAGE_NAME = "sergeyglad/wiki"
         }
  
     stages {
