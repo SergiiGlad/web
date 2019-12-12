@@ -22,10 +22,10 @@ pipeline {
                     sh 'echo Building Dockerfile'
 
                     //docker.Image.build
-                    sh 'docker build -t DOCKER_IMAGE_NAME .'
+                    sh 'docker build -t ${DOCKER_IMAGE_NAME} .'
 
                     withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-                        sh 'docker push DOCKER_IMAGE_NAME'
+                        sh 'docker push ${DOCKER_IMAGE_NAME}'
                     }
                     
                     
