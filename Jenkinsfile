@@ -28,12 +28,7 @@ pipeline {
         }            
         
         stage('PUSH') {
-            when {
-                allOf {
-                    expression { env.CHANGE_ID != null }
-                   
-                }
-            }
+    
                 steps {
                     container('docker') {
                         withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
