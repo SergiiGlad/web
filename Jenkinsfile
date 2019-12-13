@@ -28,7 +28,7 @@ pipeline {
                         sh 'docker push ${DOCKER_IMAGE_NAME}'
                     }
                     
-                    sh 'CHANGE_ID: ${env.CHANGE_ID}'
+                    sh 'CHANGE_ID: ${CHANGE_ID}'
                     
                 }    
             }
