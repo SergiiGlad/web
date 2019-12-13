@@ -28,9 +28,7 @@ pipeline {
                         sh 'docker push ${DOCKER_IMAGE_NAME}'
                     }
                     sh 'echo ${BRANCH_NAME}'
-                    script {
-                        echo 'CHANGE_ID: ${BRANCH_NAME}'
-                    }
+               
                 }    
             }
         }
