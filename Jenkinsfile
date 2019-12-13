@@ -21,11 +21,8 @@ pipeline {
                     sh 'echo "Building Dockerfile"'
 
                         //docker.Image.build
-                    sh ''
-                    
-                   script {
-                    def testImage = docker.build("${DOCKER_IMAGE_NAME}", "DOCKER_BUILDKIT=1 --cache-from ${DOCKER_IMAGE_NAME}")
-                   } 
+                    sh 'DOCKER_BUILDKIT=1  docker build . -t ${DOCKER_IMAGE_NAME} --cache-from ${DOCKER_IMAGE_NAME}'
+                               
 
                     withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
                         sh 'docker push ${DOCKER_IMAGE_NAME}'
