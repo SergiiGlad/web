@@ -20,7 +20,7 @@ pipeline {
             steps {
                 container('docker') {
                     sh '''
-                        echo Building Dockerfile
+                        echo "Building Dockerfile"
 
                         //docker.Image.build
                         DOCKER_BUILDKIT=1  docker build . -t ${DOCKER_IMAGE_NAME} --cache-from ${DOCKER_IMAGE_NAME}
