@@ -29,13 +29,13 @@ pipeline {
         
         stage('PUSH') {
                     when {       
-                        CHANGE_ID
+                        expression { CHANGE_ID }
                     }  
                     steps {
                         withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
                             sh 'docker push ${DOCKER_IMAGE_NAME}:${CHANGE_ID}'
                         }
-                        
+
                     sh 'echo ${BRANCH_NAME}'
                     sh 'echo ${CHANGE_ID}'
                 }   
