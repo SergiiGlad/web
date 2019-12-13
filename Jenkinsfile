@@ -20,7 +20,7 @@ pipeline {
                 container('docker') {
                     sh 'echo "Building Dockerfile"'
 
-                        //docker.Image.build
+                    //docker.Image.build
                     sh 'DOCKER_BUILDKIT=1  docker build . -t ${DOCKER_IMAGE_NAME} --cache-from ${DOCKER_IMAGE_NAME}'
                                
 
@@ -28,7 +28,7 @@ pipeline {
                         sh 'docker push ${DOCKER_IMAGE_NAME}'
                     }
                     sh 'echo ${BRANCH_NAME}'
-               
+                    sh 'echo ${CHANGE_ID}'
                 }    
             }
         }
