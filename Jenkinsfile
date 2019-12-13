@@ -25,7 +25,6 @@ pipeline {
                     }
                     sh 'echo ${BRANCH_NAME}'
                     sh 'echo ${CHANGE_ID}'
-                   
                 }    
             }
         }
