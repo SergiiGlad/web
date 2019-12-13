@@ -2,7 +2,8 @@ pipeline {
     agent{
       kubernetes {
        yamlFile 'podTemplWorker.yaml'
-    }
+      }
+   }
 
     stages {
         stage('Build Golang project') {
@@ -33,7 +34,7 @@ pipeline {
         stage('Test') {
             steps {
                 container('docker') {
-                    echo 'go testing..'
+                    echo 'go testing...'
                 }    
             }
         }
