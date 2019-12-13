@@ -23,19 +23,24 @@ pipeline {
 
                     //docker.Image.build
                     sh 'DOCKER_BUILDKIT=1  docker build . -t ${DOCKER_IMAGE_NAME} --cache-from ${DOCKER_IMAGE_NAME}'
-
-                     script{          
-                    if (env.CHANGE_ID) {
+                }
+            }    
+        }            
+        
+        stage('PUSH') {
+                    when {       
+                        CHANGE_ID
+                    }  
+                    steps {
                         withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
                             sh 'docker push ${DOCKER_IMAGE_NAME}:${CHANGE_ID}'
                         }
-                    }    
-                     }
+                        
                     sh 'echo ${BRANCH_NAME}'
                     sh 'echo ${CHANGE_ID}'
-                }    
+                }   
             }
-        }
+        
         stage('Test') {
             steps {
                 container('docker') {
