@@ -3,7 +3,13 @@ pipeline {
       kubernetes {
        yamlFile 'podTemplWorker.yaml'
     }
-
+  }
+  
+    environment {
+            //be sure to replace "sergeyglad" with your own Docker Hub username
+            DOCKER_IMAGE_NAME = "sergeyglad/wiki"
+        }
+ 
     stages {
         stage('Build Golang project') {
           steps{
@@ -22,18 +28,15 @@ pipeline {
                     withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
                         sh 'docker push ${DOCKER_IMAGE_NAME}'
                     }
-                  
                     sh 'echo ${BRANCH_NAME}'
-
                     sh 'echo ${CHANGE_ID}'
-                   
                 }    
             }
         }
         stage('Test') {
             steps {
                 container('docker') {
-                    echo 'go testing..'
+                    echo 'go testing...'
                 }    
             }
         }
