@@ -1,4 +1,3 @@
-#!/usr/bin/env groovy
 pipeline {
     agent{
       kubernetes {
@@ -19,12 +18,11 @@ pipeline {
         stage('Build Dockerfile') {
             steps {
                 container('docker') {
-                    sh '''
-                        echo "Building Dockerfile"
+                    sh 'echo "Building Dockerfile"'
 
                         //docker.Image.build
-                        DOCKER_BUILDKIT=1  docker build . -t ${DOCKER_IMAGE_NAME} --cache-from ${DOCKER_IMAGE_NAME}
-                    '''
+                    sh 'DOCKER_BUILDKIT=1  docker build . -t ${DOCKER_IMAGE_NAME} --cache-from ${DOCKER_IMAGE_NAME}'
+                    
 
                     withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://registry.hub.docker.com']) {
                         sh 'docker push ${DOCKER_IMAGE_NAME}'
