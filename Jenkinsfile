@@ -30,7 +30,7 @@ pipeline {
         stage('PUSH') {
             when {
            
-                    expression { env.CHANGE_ID != null }
+                    expression { CHANGE_ID != '' }
                    
             
             }
