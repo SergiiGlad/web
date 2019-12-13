@@ -28,9 +28,7 @@ pipeline {
         }            
         
         stage('PUSH') {
-                    when {       
-                        expression { CHANGE_ID }
-                    }  
+                    when { expression { env.CHANGE_ID == null } }
                     steps {
                         withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
                             sh 'docker push ${DOCKER_IMAGE_NAME}:${CHANGE_ID}'
