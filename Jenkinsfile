@@ -1,9 +1,10 @@
 pipeline {
+    
     agent{
-      kubernetes {
-       yamlFile 'podTemplWorker.yaml'
+        kubernetes {
+            yamlFile 'podTemplWorker.yaml'
+        }
     }
-  }
 
     stages {
         stage('Build Golang project') {
