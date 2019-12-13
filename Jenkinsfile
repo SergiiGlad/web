@@ -27,9 +27,9 @@ pipeline {
                     withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
                         sh 'docker push ${DOCKER_IMAGE_NAME}'
                     }
-                    
-                    sh 'CHANGE_ID: ${CHANGE_ID}'
-                    
+                    script {
+                        sh 'CHANGE_ID: ${env.CHANGE_ID}'
+                    }
                 }    
             }
         }
