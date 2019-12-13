@@ -28,7 +28,7 @@ pipeline {
                         sh 'docker push ${DOCKER_IMAGE_NAME}'
                     }
                     sh 'echo env.BRANCH_NAME'
-                    sh 'echo '${env.BRANCH_NAME}'
+                    sh 'echo ${env.BRANCH_NAME}'
                     script {
                         env
                         echo 'CHANGE_ID: ${env.BRANCH_NAME}'
