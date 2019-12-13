@@ -24,7 +24,7 @@ pipeline {
                     sh 'DOCKER_BUILDKIT=1  docker build . -t ${DOCKER_IMAGE_NAME} --cache-from ${DOCKER_IMAGE_NAME}'
                     
 
-                    withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://registry.hub.docker.com']) {
+                    withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
                         sh 'docker push ${DOCKER_IMAGE_NAME}'
                     }
                     
