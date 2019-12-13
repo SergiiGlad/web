@@ -13,26 +13,6 @@ spec:
   securityContext: {}
   serviceAccount: "default"
   containers:
-  - name: "jnlp"
-    image: "jenkins/jnlp-slave:3.27-1"
-    resources:
-     limits:
-       memory: "2Gi"
-       cpu: "512m"
-     requests:
-       memory: "512Mi"
-       cpu: "512m"
-    workingDir: "/home/jenkins/agent"   
-    securityContext:
-      privileged: false
-    tty: false
-    env:
-      - name: "JENKINS_URL"
-        value: "http://jenkins.jenkins.svc.cluster.local:8080"
-    volumeMounts:
-    - mountPath: "/home/jenkins/agent"
-      name: "workspace-volume"
-      readOnly: false
   - name: docker
     image: docker:stable-dind
     securityContext:
@@ -42,6 +22,9 @@ spec:
         value: ""  
   - name: helm
     image: lachlanevenson/k8s-helm:v2.16.1  
+    tty: true
+    command:
+      - "cat"
   volumes:
   - emptyDir:
       medium: ""

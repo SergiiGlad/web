@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Build Golang project') {
           steps{
-            sh 'echo "go test"'
+            sh 'echo "go build"'
           }
         }
         stage('Build Dockerfile') {
