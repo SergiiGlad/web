@@ -2,8 +2,8 @@ pipeline {
     agent{
       kubernetes {
        yamlFile 'podTemplWorker.yaml'
+       }
     }
-  }
   
     environment {
             //be sure to replace "sergeyglad" with your own Docker Hub username
