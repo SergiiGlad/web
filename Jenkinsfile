@@ -35,7 +35,7 @@ pipeline {
         stage('Test') {
             steps {
                 container('docker') {
-                    echo 'go testing..'
+                    echo 'go testing...'
                 }    
             }
         }
