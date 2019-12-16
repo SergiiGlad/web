@@ -37,21 +37,29 @@ pipeline {
             }    
         }            
         
-        stage('PUSH') {
+        stage('Push when') {
 
                 // isPRMergeBuild
-                when {
-                    expression { BRANCH_NAME ==~  /^PR-\d+$/ }
-                }
+             
+                //expression { BRANCH_NAME ==~  /^PR-\d+$/ }
+           
                     
-                    //changeRequest()
+                //changeRequest()
         
                 steps {
 
                     echo "Build docker image"
                     container('docker') {
                         withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-                            sh 'docker push ${DOCKER_IMAGE_NAME}'
+                            script {
+                                if ( RANCH_NAME ==~  /^PR-\d+$/ ) {
+                                    sh 'echo It is pull request'
+                                } 
+                                else {
+                                    sh 'echo push to branch'
+                                }
+                                    //sh 'docke push ${DOCKER_IMAGE_NAME}'
+                            }
                         }
 
                     sh 'echo Branch Name: ${BRANCH_NAME}'
