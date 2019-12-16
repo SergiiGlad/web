@@ -38,7 +38,7 @@ pipeline {
         
         stage('PUSH') {
                 when {
-                    expression { BRANCH_NAME =~ 'pull-requests/*' }
+                    expression { BRANCH_NAME =~ 'PR-*' }
                 }
                     
                     //changeRequest()
