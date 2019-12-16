@@ -52,7 +52,7 @@ pipeline {
                     container('docker') {
                         withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
                             script {
-                                if ( RANCH_NAME ==~  /^PR-\d+$/ ) {
+                                if ( env.BRANCH_NAME ==~  /^PR-\d+$/ ) {
                                     sh 'echo It is pull request'
                                 } 
                                 else {
