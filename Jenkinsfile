@@ -43,8 +43,8 @@ pipeline {
                             sh 'docker push ${DOCKER_IMAGE_NAME}'
                         }
 
-                    echo '${BRANCH_NAME}'
-                    echo '${CHANGE_ID}'
+                    sh 'echo Branch Name: ${BRANCH_NAME}'
+                    sh 'echo Change ID: ${CHANGE_ID}'
                  }   
                 }
             }
