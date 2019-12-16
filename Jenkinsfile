@@ -12,9 +12,7 @@ pipeline {
         }
 
     stages {
-        stage ('Chackout SCM') {
-            checkout([$class: 'GitSCM'])
-        }
+      
 
         stage('Build Golang project') {
           steps{
@@ -22,6 +20,9 @@ pipeline {
           }
         }
         stage('Build Dockerfile') {
+            steps {
+                checkout([$class: 'GitSCM'])
+            }
             steps {
                 container('docker') {
                     sh 'echo "Building Dockerfile"'
