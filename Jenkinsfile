@@ -24,6 +24,9 @@ pipeline {
 
                     // docker.Image.build
                     // DOCKER_BUILDKIT=1 
+
+                    sh 'pwd'
+                    sh 'ls'
                     sh 'docker build . -t ${DOCKER_IMAGE_NAME} --cache-from ${DOCKER_IMAGE_NAME}'
                 }
             }    
