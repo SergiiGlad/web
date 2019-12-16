@@ -37,9 +37,9 @@ pipeline {
         }            
         
         stage('PUSH') {
-            
-                    //expression { env.BRANCH_NAME =~ 'pull-requests/*' }
-             
+                when {
+                    expression { BRANCH_NAME =~ 'pull-requests/*' }
+                }
                     //changeRequest()
         
                 steps {
