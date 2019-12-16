@@ -36,7 +36,8 @@ pipeline {
                     echo "Build docker image"
                     container('docker') {
                         withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-                            sh 'docker push ${DOCKER_IMAGE_NAME}:${CHANGE_ID}'
+                            echo 'Change ID: ${CHANGE_ID}'
+                            sh 'docker push ${DOCKER_IMAGE_NAME}'
                         }
 
                     sh 'echo ${BRANCH_NAME}'
