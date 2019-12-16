@@ -36,6 +36,17 @@ pipeline {
                 }
             }    
         }            
+
+        stage ('TAG') {
+
+            when {
+                        tag '^.$'
+                        }
+            steps {
+                sh 'echo TAG' 
+            }            
+
+        }
         
         stage('Push to Docker hub') {
 
