@@ -24,7 +24,6 @@ pipeline {
             steps {
                 container('docker') {
                      
-                    checkout([$class: 'GitSCM'])
                     sh 'echo "Building Dockerfile"'
 
                     // docker.Image.build
