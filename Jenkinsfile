@@ -25,7 +25,6 @@ pipeline {
                 container('docker') {
                      
                     sh 'echo "Building Dockerfile"'
-
                     // docker.Image.build
                     // DOCKER_BUILDKIT=1 
 
