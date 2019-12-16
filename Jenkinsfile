@@ -31,6 +31,8 @@ pipeline {
 
                     sh 'pwd'
                     sh 'ls'
+                    sh 'echo Branch Name: ${BRANCH_NAME}'
+                    sh 'echo Change ID: ${CHANGE_ID}'
                     sh 'docker build . -t ${DOCKER_IMAGE_NAME} --cache-from ${DOCKER_IMAGE_NAME}'
                 }
             }    
