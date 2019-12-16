@@ -6,6 +6,11 @@ pipeline {
         }
     }
 
+     environment {
+            //be sure to replace "sergeyglad" with your own Docker Hub username
+            DOCKER_IMAGE_NAME = "sergeyglad/wiki"
+        }
+
     stages {
         stage('Build Golang project') {
           steps{
