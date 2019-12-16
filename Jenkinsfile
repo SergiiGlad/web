@@ -22,8 +22,9 @@ pipeline {
                 container('docker') {
                     sh 'echo "Building Dockerfile"'
 
-                    //docker.Image.build
-                    sh 'DOCKER_BUILDKIT=1  docker build . -t ${DOCKER_IMAGE_NAME} --cache-from ${DOCKER_IMAGE_NAME}'
+                    // docker.Image.build
+                    // DOCKER_BUILDKIT=1 
+                    sh 'docker build . -t ${DOCKER_IMAGE_NAME} --cache-from ${DOCKER_IMAGE_NAME}'
                 }
             }    
         }            
