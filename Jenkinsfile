@@ -29,9 +29,11 @@ pipeline {
         }            
         
         stage('PUSH') {
-            when {
+             when {
                     expression { env.BRANCH_NAME =~ 'pull-requests/*' }
-            }
+             }
+                    //changeRequest()
+        
                 steps {
 
                     echo "Build docker image"
@@ -41,8 +43,10 @@ pipeline {
                             sh 'docker push ${DOCKER_IMAGE_NAME}'
                         }
 
-                    sh 'echo ${BRANCH_NAME}'
-                    sh 'echo ${CHANGE_ID}'
+
+                    sh 'echo Branch Name: ${BRANCH_NAME}'
+                    sh 'echo Change ID: ${CHANGE_ID}'
+
                  }   
                 }
             }
