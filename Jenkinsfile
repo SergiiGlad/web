@@ -12,6 +12,10 @@ pipeline {
         }
 
     stages {
+        stage ('Chackout SCM') {
+            checkout([$class: 'GitSCM'])
+        }
+
         stage('Build Golang project') {
           steps{
             sh 'echo "go build"'
