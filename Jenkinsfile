@@ -71,7 +71,7 @@ pipeline {
                                 if ( env.BRANCH_NAME ==~  /^PR-\d+$/ ) {
                                     sh 'echo It is pull request'
                                 } 
-                                else if buildingTag() {
+                                else if (env.BRANCH_NAME ==~  /^master$/) {
                                     sh 'echo push to master BRANCH_NAME: $(BRANCH_NAME)'
                                 } else if (env.GIT_TAG_NAME =~ /^.$/ ){
                                     sh 'echo qa release with tag : $(GIT_TAG_NAME)'
