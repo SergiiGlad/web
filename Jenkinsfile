@@ -19,16 +19,29 @@ pipeline {
 
                     //docker.Image.build
                     sh 'DOCKER_BUILDKIT=1  docker build . -t ${DOCKER_IMAGE_NAME} --cache-from ${DOCKER_IMAGE_NAME}'
-                               
-
-                    withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-                        sh 'docker push ${DOCKER_IMAGE_NAME}'
-                    }
-                    sh 'echo ${BRANCH_NAME}'
-                    sh 'echo ${CHANGE_ID}'
-                }    
+                }
+            }    
+        }            
+        
+        stage('PUSH') {
+            when {
+                    expression { env.BRANCH_NAME =~ 'pull-requests/*' }
             }
-        }
+                steps {
+
+                    echo "Build docker image"
+                    container('docker') {
+                        withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
+                           
+                            sh 'docker push ${DOCKER_IMAGE_NAME}'
+                        }
+
+                    echo '${BRANCH_NAME}'
+                    echo '${CHANGE_ID}'
+                 }   
+                }
+            }
+        
         stage('Test') {
             steps {
                 container('docker') {
