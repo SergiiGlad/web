@@ -38,8 +38,10 @@ pipeline {
         }            
         
         stage('PUSH') {
+
+                // isPRMergeBuild
                 when {
-                    expression { BRANCH_NAME =~ 'PR-*' }
+                    expression { BRANCH_NAME ==~  /^PR-\d+$/ }
                 }
                     
                     //changeRequest()
