@@ -20,11 +20,11 @@ pipeline {
           }
         }
         stage('Build Dockerfile') {
-            steps {
-                checkout([$class: 'GitSCM'])
-            }
+       
             steps {
                 container('docker') {
+                     
+                    checkout([$class: 'GitSCM'])
                     sh 'echo "Building Dockerfile"'
 
                     // docker.Image.build
