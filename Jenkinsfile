@@ -27,14 +27,14 @@ pipeline {
 
                     sh 'pwd'
                     sh 'ls'
-                    sh 'DOCKER_BUILDKIT=1 docker build . -t ${DOCKER_IMAGE_NAME} --cache-from ${DOCKER_IMAGE_NAME}'
+                    sh 'docker build . -t ${DOCKER_IMAGE_NAME} --cache-from ${DOCKER_IMAGE_NAME}'
                 }
             }    
         }            
         
         stage('PUSH') {
              when {
-                    expression { env.BRANCH_NAME =~ 'pull-requests/*' }
+                    //expression { env.BRANCH_NAME =~ 'pull-requests/*' }
              }
                     //changeRequest()
         
