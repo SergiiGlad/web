@@ -39,8 +39,8 @@ pipeline {
 
         stage ('TAG') {
 
-            when {
-                        tag '^.$'
+           when {
+                        buildingTag()
                         }
             steps {
                 sh 'echo TAG' 
