@@ -59,7 +59,7 @@ pipeline {
                 echo "echo production release"
                 //PROD environment var
                 script {
-                    sh 'PROD=$(cat production-release.txt)'
+                    sh 'env.PROD=$(cat production-release.txt)'
                 }
                 //sh 'printenv'
                 echo "${PROD}"
