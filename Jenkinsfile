@@ -56,7 +56,7 @@ pipeline {
             }
 
             steps {
-                echo "echo production release"
+                echo "echo production release++++++++++++++++++++++++"
                 //PROD environment var
                 script {
                     PROD="ooooo"
