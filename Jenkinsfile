@@ -56,11 +56,13 @@ pipeline {
             }
 
             steps {
-                sh 'echo production release ' 
+                echo "echo production release"
                 //PROD environment var
-                PROD=$(cat production-release.txt)
+                script {
+                    sh 'PROD=$(cat production-release.txt)'
+                }
                 //sh 'printenv'
-                sh 'echo ${PROD}'
+                echo "${PROD}"
             }
         }
         
