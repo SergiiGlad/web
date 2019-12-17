@@ -59,7 +59,8 @@ pipeline {
 
             steps {
                 sh 'echo production release ' 
-                sh 
+                sh '${PROD}=$(cat production-release.txt)'
+                sh 'echo ${PROD}'
             }
         }
         
