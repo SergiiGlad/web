@@ -69,9 +69,10 @@ spec:
             } else {
                 sh 'echo push to other branch $(BRANCH_NAME)'
             }
+
         }
     }
-
-  }
+   } // node
+  } //podTemplate
 }
 
