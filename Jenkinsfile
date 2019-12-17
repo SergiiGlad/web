@@ -43,7 +43,7 @@ pipeline {
                         buildingTag()
                 }
             steps {
-                sh 'echo env.tag' 
+                sh 'echo building tag' 
             }            
 
         }
