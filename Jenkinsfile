@@ -58,7 +58,7 @@ pipeline {
             steps {
                 sh 'echo production release ' 
                 //PROD environment var
-                env.PROD = sh '$(cat production-release.txt)'
+                sh 'env.PROD=$(cat production-release.txt)'
                 sh 'printenv'
                 sh 'echo ${PROD}'
             }
