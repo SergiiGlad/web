@@ -78,7 +78,7 @@ pipeline {
 
                     echo 'Branch Name: ${BRANCH_NAME}'
                     echo 'Change ID ${CHANGE_ID}'
-=
+
                  }   
 
                  script {
