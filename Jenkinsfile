@@ -51,7 +51,7 @@ pipeline {
         stage ('Change file production-release.txt ')  {
             when { 
              
-                    changeset pattern: "production-release.txt", caseSensitive: true 
+                    changeset pattern: "production-release.txt"
              
             }
 
@@ -79,7 +79,7 @@ pipeline {
 
                  }   
 
-                 script {
+                 script{
                                 // isPRMergeBuild
                                 if ( env.BRANCH_NAME ==~  /^PR-\d+$/ ) {
                                     sh 'echo It is pull request'
