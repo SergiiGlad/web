@@ -59,12 +59,9 @@ pipeline {
                 echo "echo production release++++++++++++++++++++++++"
                 //PROD environment var
                 script {
-                    env.TEXT= ""
-                    PROD="ooooo"
-                    echo "script ${PROD}"
-                    sh 'env.TEXT=$(cat production-release.txt)'
-                    PROD=${env.TEXT} 
-                    echo "script ${env.TEXT}"
+                   
+                   // Capturing sh command output in the env variable
+                    PROD="${sh(script:'cat production-release.txt)',returnStdout: true)}"
                     echo "script ${PROD}"
                 }
                 //sh 'printenv | sort'
