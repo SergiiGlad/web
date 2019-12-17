@@ -63,7 +63,7 @@ pipeline {
                     PROD="ooooo"
                     echo "script ${PROD}"
                     sh 'env.TEXT=$(cat production-release.txt)'
-                    PROD=$(env.TEXT) 
+                    PROD=${env.TEXT} 
                     echo "script ${env.TEXT}"
                     echo "script ${PROD}"
                 }
