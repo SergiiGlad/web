@@ -77,7 +77,7 @@ pipeline {
 
                     sh 'echo Branch Name: ${BRANCH_NAME}'
                     sh 'echo Change ID: ${CHANGE_ID}'
-                    sh 'echo env GIT_TAG_NAME: ${GIT_TAG_NAME}'
+               
 
                  }   
 
