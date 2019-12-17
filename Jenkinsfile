@@ -53,7 +53,7 @@ pipeline {
             when { 
                 allOf{
                     branch 'master'
-                    changeset pattern: 'production-release.txt", comparator: "REGEXP'
+                    changeset pattern: "production-release.txt"
                 }
             }
 
