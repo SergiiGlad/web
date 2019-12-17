@@ -59,11 +59,12 @@ pipeline {
                 echo "echo production release++++++++++++++++++++++++"
                 //PROD environment var
                 script {
+                    env.TEXT= ""
                     PROD="ooooo"
                     echo "script ${PROD}"
                     sh 'env.TEXT=$(cat production-release.txt)'
-                    PROD=$(TEXT) 
-                    echo "script ${TEXT}"
+                    PROD=$(env.TEXT) 
+                    echo "script ${env.TEXT}"
                     echo "script ${PROD}"
                 }
                 //sh 'printenv | sort'
