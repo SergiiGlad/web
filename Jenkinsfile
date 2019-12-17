@@ -52,8 +52,8 @@ pipeline {
         stage ('Change file production-release.txt ')  {
             when { 
                 allOf{
-                changeRequest target: 'master';
-                changeset pattern: 'production-release.txt", comparator: "REGEXP'
+                    branch 'master'
+                    changeset pattern: 'production-release.txt", comparator: "REGEXP'
                 }
             }
 
@@ -73,7 +73,7 @@ pipeline {
                     container('docker') {
                         withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
 
-                            sh 'docker push ${DOCKER_IMAGE_NAME}'
+                           // sh 'docker push ${DOCKER_IMAGE_NAME}'
                         }
 
                     echo 'Branch Name: ${BRANCH_NAME}'
