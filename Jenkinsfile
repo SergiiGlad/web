@@ -9,7 +9,7 @@ pipeline {
      environment {
             //be sure to replace "sergeyglad" with your own Docker Hub username
             DOCKER_IMAGE_NAME = "sergeyglad/wiki"
-            PROD = ""
+            PROD
         }
 
     stages {
@@ -59,6 +59,7 @@ pipeline {
                 sh 'echo production release ' 
                 //PROD environment var
                 sh 'PROD=$(cat production-release.txt)'
+                sh 'env'
                 sh 'echo ${PROD}'
             }
         }
