@@ -51,7 +51,7 @@ pipeline {
         stage ('Change file production-release.txt ')  {
             when { 
              
-                    changeset pattern: "production-release.txt"
+                    changeset pattern: "production-release.txt", comparator: "REGEXP" 
              
             }
 
@@ -74,8 +74,8 @@ pipeline {
                            // sh 'docker push ${DOCKER_IMAGE_NAME}'
                         }
 
-                    echo 'Branch Name: ${BRANCH_NAME}'
-                    echo 'Change ID ${CHANGE_ID}'
+                    sh 'echo Branch Name: ${BRANCH_NAME}'
+                    sh 'echo Change ID ${CHANGE_ID}'
 
                  }   
 
