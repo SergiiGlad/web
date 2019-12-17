@@ -71,8 +71,8 @@ spec:
             }
 
         }
-    }
+    
    } // node
-  } //podTemplate
-}
+} //podTemplate
+
 
