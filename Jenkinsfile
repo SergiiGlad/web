@@ -29,8 +29,7 @@ pipeline {
                     // docker.Image.build
                     // DOCKER_BUILDKIT=1 
 
-                    sh 'pwd'
-                    sh 'ls'
+                   
                     sh 'echo Branch Name: ${BRANCH_NAME}'
                     sh 'echo Change ID: ${CHANGE_ID}'
                     //sh 'docker build . -t ${DOCKER_IMAGE_NAME} --cache-from ${DOCKER_IMAGE_NAME}'
@@ -51,10 +50,9 @@ pipeline {
 
         stage ('Change file production-release.txt ')  {
             when { 
-                allOf{
-                    branch 'master'
-                    changeset pattern: "production-release.txt"
-                }
+             
+                    changeset pattern: "production-release.txt", caseSensitive: true 
+             
             }
 
             steps {
@@ -82,7 +80,6 @@ pipeline {
                  }   
 
                  script {
-                                
                                 // isPRMergeBuild
                                 if ( env.BRANCH_NAME ==~  /^PR-\d+$/ ) {
                                     sh 'echo It is pull request'
