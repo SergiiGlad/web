@@ -1,10 +1,11 @@
 #!/usr/bin/env groovy
 
 /**
- * This pipeline describes a multi container job, running Maven and Golang builds
+ * This pipeline describes a multi container job, running Docker and Golang builds
  */
 
-podTemplate(yaml: """
+def label = "jenkins-worker"
+podTemplate(label: label, yaml: """
 apiVersion: v1
 kind: Pod
 spec:
@@ -42,7 +43,33 @@ spec:
       
       container('docker') {
         echo "docker build"
+     
       }
+    }
+
+    stage('test') {
+         
+        echo "TEST"
+     
+      }
+    }
+
+    stage('Deploy') {
+        container('helm') {
+               // isPRMergeBuild
+            if ( env.BRANCH_NAME ==~  /^PR-\d+$/ ) {
+                sh 'echo It is pull request'
+                // is Push to master    
+            } else if (env.BRANCH_NAME ==~  /^master$/) {
+                sh 'echo Its push to master '
+            // isTag    
+            } else if (env.BRANCH_NAME =~ /^v\d.\d.\d$/ ){
+                sh 'echo qa release with tag : $(BRANCH_NAME)'
+            // Other operation    
+            } else {
+                sh 'echo push to other branch $(BRANCH_NAME)'
+            }
+        }
     }
 
   }
