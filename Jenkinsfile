@@ -85,7 +85,7 @@ pipeline {
                                     sh 'echo It is pull request'
                                 // is Push to master    
                                 } else if (env.BRANCH_NAME ==~  /^master$/) {
-                                    sh 'echo It\'s push to master '
+                                    sh 'echo Its push to master '
                                 // isTag    
                                 } else if (env.BRANCH_NAME =~ /^v\d.\d.\d$/ ){
                                     sh 'echo qa release with tag : $(BRANCH_NAME)'
