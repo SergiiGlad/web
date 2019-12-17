@@ -61,7 +61,7 @@ pipeline {
                 script {
                    
                    // Capturing sh command output in the env variable
-                    PROD="${sh(script:'cat production-release.txt)',returnStdout: true)}"
+                    PROD="${sh(script:'cat production-release.txt',returnStdout: true)}"
                     echo "script ${PROD}"
                 }
                 //sh 'printenv | sort'
