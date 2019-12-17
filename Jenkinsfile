@@ -70,18 +70,14 @@ pipeline {
                                 // isPRMergeBuild
                                 if ( env.BRANCH_NAME ==~  /^PR-\d+$/ ) {
                                     sh 'echo It is pull request'
-                                } 
-                                else if (env.BRANCH_NAME ==~  /^master$/) {
-                                    sh 'echo push to master BRANCH_NAME: $(BRANCH_NAME)'
-                                } else if (env.GIT_TAG_NAME =~ /^.$/ ){
-                                    sh 'echo qa release with tag : $(GIT_TAG_NAME)'
-                                    sh 'echo GIT TAG MESSAGE: $(GIT_TAG_MESSAGE) '
-                                }
-                                else {
+                                } else if (env.BRANCH_NAME ==~  /^master$/) {
+                                    sh 'echo It\'s push to master '
+                                } else if (env.BRANCH_NAME =~ /^v\d.\d.\d$/ ){
+                                    sh 'echo qa release with tag : $(BRANCH_NAME)'
+                                } else {
                                     sh 'echo push to other branch $(BRANCH_NAME)'
-
                                 }
-                                    //sh 'docke push ${DOCKER_IMAGE_NAME}'
+                                   
                             }
                 }
             }
