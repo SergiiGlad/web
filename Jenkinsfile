@@ -107,7 +107,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                echo 'Deploying....'
+                sh 'echo Deploying....'
                 container('helm') {
                  withKubeConfig([credentialsId: 'kubeconfig']) {
                  sh 'helm version'
