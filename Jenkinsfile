@@ -49,15 +49,16 @@ pipeline {
         }
 
         stage ('Change file production-release.txt ')  {
-            when { 
-             
-                    changeset pattern: "production-release.txt", comparator: "REGEXP" 
+            when {              
+                    
+                    changeset pattern: "production-release.txt"
              
             }
 
             steps {
                 sh 'echo production release ' 
-                sh '${PROD}=$(cat production-release.txt)'
+                //PROD environment var
+                sh 'PROD=$(cat production-release.txt)'
                 sh 'echo ${PROD}'
             }
         }
