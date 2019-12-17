@@ -59,7 +59,8 @@ pipeline {
                 echo "echo production release"
                 //PROD environment var
                 script {
-                    PROD=sh( $(cat production-release.txt) ) 
+                    env.PROD="ooooo"
+                    //$(cat production-release.txt) ) 
                 }
                 //sh 'printenv | sort'
                 echo "${PROD}"
