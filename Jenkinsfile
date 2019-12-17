@@ -51,7 +51,7 @@ spec:
          
         echo "TEST"
      
-      }
+      
     }
 
     stage('Deploy') {
@@ -72,7 +72,8 @@ spec:
 
         }
     
-   } // node
+   } 
+}// node
 } //podTemplate
 
 
