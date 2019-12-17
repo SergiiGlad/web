@@ -30,7 +30,7 @@ spec:
  """
   ) {
 
-  node(POD_LABEL) {
+  node(label) {
     stage('Build Golang project') {
     
       container('golang') {
