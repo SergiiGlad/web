@@ -11,7 +11,7 @@ spec:
   containers:
   - name: golang
     image: golang:1.8.0
-    command: ['cat']
+    command: 'cat'
     tty: true
   - name: docker-dind
     image: docker:stable-dind
@@ -23,7 +23,7 @@ spec:
   - name: helm
     image: lachlanevenson/k8s-helm:v2.16.1  
     tty: true
-    command:['cat']
+    command:'cat'
  """
   ) {
 
