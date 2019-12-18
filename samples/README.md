@@ -108,58 +108,58 @@ ENTRYPOINT ["/bin/weaviate"]
   
   <https://blog.golang.org/docker>
   ```
-  # Start from a Debian image with the latest version of Go installed
-# and a workspace (GOPATH) configured at /go.
+ Start from a Debian image with the latest version of Go installed
+ and a workspace (GOPATH) configured at /go.
 FROM golang
 
-# Copy the local package files to the container's workspace.
+ Copy the local package files to the container's workspace.
 ADD . /go/src/github.com/golang/example/outyet
 
-# Build the outyet command inside the container.
-# (You may fetch or manage dependencies here,
-# either manually or with a tool like "godep".)
+ Build the outyet command inside the container.
+ (You may fetch or manage dependencies here,
+ either manually or with a tool like "godep".)
 RUN go install github.com/golang/example/outyet
 
-# Run the outyet command by default when the container starts.
+ Run the outyet command by default when the container starts.
 ENTRYPOINT /go/bin/outyet
 
-# Document that the service listens on port 8080.
+ Document that the service listens on port 8080.
 EXPOSE 8080
 ```
 
 <https://ops.tips/blog/dockerfile-golang/>
 ```
-# Retrieve the `golang:alpine` image to provide us the 
-# necessary Golang tooling for building Go binaries.
-#
-# Here I retrieve the `alpine`-based just for the 
-# convenience of using a tiny image.
+ Retrieve the `golang:alpine` image to provide us the 
+ necessary Golang tooling for building Go binaries.
+
+ Here I retrieve the `alpine`-based just for the 
+ convenience of using a tiny image.
 FROM golang:alpine
 
-# Add the `main` file that is really the only Golang 
-# file under the root directory that matters for the 
-# build 
+ Add the `main` file that is really the only Golang 
+ file under the root directory that matters for the 
+ build 
 ADD ./main.go /go/src/github.com/cirocosta/l7/main.go
 
-# Add all the files from the packages that I own
+ Add all the files from the packages that I own
 ADD ./lib /go/src/github.com/cirocosta/l7/lib
 
-# Add vendor dependencies (committed or not)
-# I typically commit the vendor dependencies as it
-# makes the final build more reproducible and less
-# dependant on dependency managers.
+ Add vendor dependencies (committed or not)
+ I typically commit the vendor dependencies as it
+ makes the final build more reproducible and less
+ dependant on dependency managers.
 ADD ./vendor /go/src/github.com/cirocosta/l7/vendor
 
-# 0.    Set some shell flags like `-e` to abort the 
-#       execution in case of any failure (useful if we 
-#       have many ';' commands) and also `-x` to print to 
-#       stderr each command already expanded.
-# 1.    Get into the directory with the golang source code
-# 2.    Perform the go build with some flags to make our
-#       build produce a static binary (CGO_ENABLED=0 and 
-#       the `netgo` tag).
-# 3.    copy the final binary to a suitable location that
-#       is easy to reference in the next stage
+ 0.    Set some shell flags like `-e` to abort the 
+       execution in case of any failure (useful if we 
+       have many ';' commands) and also `-x` to print to 
+       stderr each command already expanded.
+ 1.    Get into the directory with the golang source code
+ 2.    Perform the go build with some flags to make our
+       build produce a static binary (CGO_ENABLED=0 and 
+       the `netgo` tag).
+ 3.    copy the final binary to a suitable location that
+       is easy to reference in the next stage
 RUN set -ex && \
   cd /go/src/github.com/cirocosta/l7 && \       
   CGO_ENABLED=0 go build \
@@ -168,7 +168,7 @@ RUN set -ex && \
         -ldflags '-extldflags "-static"' && \
   mv ./l7 /usr/bin/l7
 
-# Set the binary as the entrypoint of the container
+ Set the binary as the entrypoint of the container
 ENTRYPOINT [ "l7" ]
 ```
 
@@ -177,27 +177,27 @@ ENTRYPOINT [ "l7" ]
 
 ```
 FROM golang:1.8.5-jessie as builder
-# install glide
+ install glide
 RUN go get github.com/Masterminds/glide
-# setup the working directory
+ setup the working directory
 WORKDIR /go/src/app
 ADD glide.yaml glide.yaml
 ADD glide.lock glide.lock
-# install dependencies
+ install dependencies
 RUN glide install
-# add source code
+ add source code
 ADD src src
-# build the source
+ build the source
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main src/main.go
 
-# use a minimal alpine image
+ use a minimal alpine image
 FROM alpine:3.7
-# add ca-certificates in case you need them
+ add ca-certificates in case you need them
 RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
-# set working directory
+ set working directory
 WORKDIR /root
-# copy the binary from builder
+ copy the binary from builder
 COPY --from=builder /go/src/app/main .
-# run the binary
+ run the binary
 CMD ["./main"]
 ```
