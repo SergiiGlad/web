@@ -41,6 +41,7 @@ spec:
         sh 'ls; pwd; hostname;'
         sh 'ls /go'
         sh 'go version'
+        sh 'go build --work ./wiki'
       }
     }
 
