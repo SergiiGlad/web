@@ -42,12 +42,14 @@ spec:
         sh 'printenv | sort'
         GOPATH="${WORKSPACE}/go" //${sh(script:'cat production-release.txt',returnStdout: true)}"
         echo "${GOPATH}"
-        sh 'echo env.GOPATH'
-        sh 'export GOPATH="/home/jenkins/agent/workspace/multibranchtempl_master/go"'
-        sh 'env | sort'
-        sh 'echo $GOPATH'
-        sh 'go version'
-        sh 'go install wiki'
+        sh """
+            echo ${env.GOPATH}
+            export GOPATH="/home/jenkins/agent/workspace/multibranchtempl_master/go"
+            env | sort
+            echo $GOPATH
+            go version
+            go install wiki
+        """
       }
     }
 
