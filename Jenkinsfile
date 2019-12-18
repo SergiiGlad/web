@@ -47,6 +47,7 @@ spec:
             echo ${env.GOPATH}
             echo $GOPATH
             pwd
+            //ln -s `pwd` /go/src
             go version
             go install wiki
             ls ${GOPATH}
