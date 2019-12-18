@@ -39,7 +39,8 @@ spec:
       container('golang') {
         echo "Build Golang app"
         sh 'ls; pwd; hostname;'
-        sh 'export GOPATH="${PWD}/go"'
+        sh 'printenv | sort'
+        sh 'export GOPATH=${PWD}/go'
         echo "${GOPATH}"
         sh 'go version'
         sh 'go install wiki'
