@@ -11,7 +11,7 @@ kind: Pod
 spec:
   containers:
   - name: golang
-    image: golang:1.8.0
+    image: golang:1.13.0-alpine
     command:
       - "cat"
     tty: true
@@ -39,22 +39,19 @@ spec:
       container('golang') {
         echo "Build Golang app"
         sh 'ls; pwd; hostname;'
-        // sh 'printenv | sort'
-       // GOPATH="${WORKSPACE}/go" //${sh(script:'cat production-release.txt',returnStdout: true)}"
-       // echo "${GOPATH}"
+
+        // set GOPATH to workspace-volume
         withEnv(["GOPATH=${WORKSPACE}"]) {
-        //echo ${env.GOPATH}
-            //export GOPATH="${env.GOPATH}/go"    
         sh """
-            
-            ln -s `pwd` /go/src
+            echo ${env.GOPATH}
+            export GOPATH="${env.GOPATH}"
             echo $GOPATH
-            ls /go/src
-            go version
-            go install wiki
+            CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o main . 
             ls ${GOPATH}
             ls ${GOPATH}/bin
         """
+        
+        
         }
       }
     }
