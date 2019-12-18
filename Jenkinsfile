@@ -40,13 +40,9 @@ spec:
         echo "Build Golang app"
         sh 'ls; pwd; hostname;'
         // sh 'printenv | sort'
-        GOPATH=${WORKSPACE} //${sh(script:'cat production-release.txt',returnStdout: true)}"
-        echo "GOPATH = ${GOPATH}"
-
-        envVars: [
-  envVar(key: 'GOPATH', value: WORKSPACE)
-]),
-       
+        GOPATH="${WORKSPACE} //${sh(script:'cat production-release.txt',returnStdout: true)}"
+        echo "${GOPATH}"
+        withEnv(["GOPATH=${WORKSPACE}"]) {
         sh """
             echo ${env.GOPATH}
             export GOPATH="${env.GOPATH}/go"
@@ -56,7 +52,7 @@ spec:
             ls ${GOPATH}
             ls ${GOPATH}/bin
         """
-        
+        }
       }
     }
 
