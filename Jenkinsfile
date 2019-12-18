@@ -42,7 +42,7 @@ spec:
         // sh 'printenv | sort'
         GOPATH="${WORKSPACE}/go" //${sh(script:'cat production-release.txt',returnStdout: true)}"
         echo "${GOPATH}"
-        withEnv(["GOPATH=${WORKSPACE}/go"]) {
+        withEnv(["GOPATH=${WORKSPACE}"]) {
         sh """
             echo ${env.GOPATH}
             export GOPATH="${env.GOPATH}/go"
