@@ -31,11 +31,11 @@ spec:
   ) {
 
   node(label) {
-    stage('Build Golang project') {
+    stage('Build and test Golang app') {
     
       container('golang') {
-        echo "Build Golang project"
-        sh 'printenv | sort'
+        echo "Build Golang app"
+        sh 'ls; pwd; hostname;'
       }
     }
 
