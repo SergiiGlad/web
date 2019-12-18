@@ -39,7 +39,7 @@ spec:
       container('golang') {
         echo "Build Golang app"
     
-        CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o main . 
+        sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o main .'
        
      
       }
