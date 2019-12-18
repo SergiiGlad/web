@@ -40,13 +40,15 @@ spec:
         echo "Build Golang app"
         sh 'ls; pwd; hostname;'
         // sh 'printenv | sort'
-        GOPATH="${WORKSPACE}/go" //${sh(script:'cat production-release.txt',returnStdout: true)}"
-        echo "${GOPATH}"
+       // GOPATH="${WORKSPACE}/go" //${sh(script:'cat production-release.txt',returnStdout: true)}"
+       // echo "${GOPATH}"
         withEnv(["GOPATH=${WORKSPACE}"]) {
         sh """
-            echo ${env.GOPATH}
-            export GOPATH="${env.GOPATH}/go"
+            //echo ${env.GOPATH}
+            //export GOPATH="${env.GOPATH}/go"
+            ln -s `pwd` /go/src
             echo $GOPATH
+            ls /go/src
             go version
             go install wiki
             ls ${GOPATH}
