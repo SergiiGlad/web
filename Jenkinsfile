@@ -31,6 +31,9 @@ spec:
   ) {
 
   node(label) {
+    stage('Chackout SCM') {
+        checkout scm
+    }  
     stage('Build and test Golang app') {
     
       container('golang') {
