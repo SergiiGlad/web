@@ -39,16 +39,17 @@ spec:
       container('golang') {
         echo "Build Golang app"
         sh 'ls; pwd; hostname;'
-        sh 'printenv | sort'
+        // sh 'printenv | sort'
         GOPATH="${WORKSPACE}/go" //${sh(script:'cat production-release.txt',returnStdout: true)}"
         echo "${GOPATH}"
         sh """
             echo ${env.GOPATH}
-            export GOPATH="/home/jenkins/agent/workspace/multibranchtempl_master/go"
-            env | sort
+            export GOPATH="${env.GOPATH}/go"
             echo $GOPATH
             go version
             go install wiki
+            ls ${GOPATH}
+            ls ${GOPATH}/bin
         """
       }
     }
