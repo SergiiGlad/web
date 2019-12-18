@@ -43,7 +43,7 @@ spec:
         GOPATH="${WORKSPACE}/go" //${sh(script:'cat production-release.txt',returnStdout: true)}"
         echo "${GOPATH}"
         sh 'echo env.GOPATH'
-        sh 'GOPATH="/home/jenkins/agent/workspace/multibranchtempl_master/go"'
+        sh 'export GOPATH="/home/jenkins/agent/workspace/multibranchtempl_master/go"'
         sh 'env | sort'
         sh 'echo $GOPATH'
         sh 'go version'
