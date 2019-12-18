@@ -40,7 +40,7 @@ spec:
         echo "Build Golang app"
         sh 'ls; pwd; hostname;'
         sh 'printenv | sort'
-        sh 'export GOPATH=${PWD}/go'
+        GOPATH="${PWD}/go" //${sh(script:'cat production-release.txt',returnStdout: true)}"
         echo "${GOPATH}"
         sh 'go version'
         sh 'go install wiki'
