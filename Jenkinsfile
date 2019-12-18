@@ -15,10 +15,6 @@ spec:
     command:
       - "cat"
     tty: true
-    volumeMounts:
-    - mountPath: "/go"
-      name: "workspace-volume"
-      readOnly: false
   - name: docker-dind
     image: docker:stable-dind
     securityContext:
@@ -43,7 +39,8 @@ spec:
       container('golang') {
         echo "Build Golang app"
         sh 'ls; pwd; hostname;'
-        sh 'ls /go'
+        sh 'ln ./src /go/src'
+        sh 'ls -al /go/src'
         sh 'go version'
         sh 'go install wiki'
       }
