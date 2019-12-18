@@ -43,9 +43,10 @@ spec:
        // GOPATH="${WORKSPACE}/go" //${sh(script:'cat production-release.txt',returnStdout: true)}"
        // echo "${GOPATH}"
         withEnv(["GOPATH=${WORKSPACE}"]) {
+        //echo ${env.GOPATH}
+            //export GOPATH="${env.GOPATH}/go"    
         sh """
-            //echo ${env.GOPATH}
-            //export GOPATH="${env.GOPATH}/go"
+            
             ln -s `pwd` /go/src
             echo $GOPATH
             ls /go/src
