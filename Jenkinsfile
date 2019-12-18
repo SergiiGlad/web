@@ -53,9 +53,9 @@ spec:
 
     stage('test') {
          
-        echo "TEST"
+        echo "TEST+++++++++++"
 
-        sh '++++++echo $BRANCH_NAME'
+        sh 'echo $BRANCH_NAME'
      
       
     }
