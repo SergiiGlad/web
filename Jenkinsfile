@@ -31,18 +31,16 @@ spec:
   ) {
 
   node(label) {
-    stage('Chackout SCM') {
+    stage('Checkout SCM') {
         checkout scm
-    }  
+    } 
+
     stage('Build and test Golang app') {
-    
-      container('golang') {
+        container('golang') {
+        
         echo "Build Golang app"
-    
         sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o main .'
-       
-     
-      }
+        }
     }
 
     stage('Build docker') {
@@ -56,6 +54,8 @@ spec:
     stage('test') {
          
         echo "TEST"
+
+        sh '++++++echo $BRANCH_NAME'
      
       
     }
