@@ -36,6 +36,8 @@ spec:
       container('golang') {
         echo "Build Golang app"
         sh 'ls; pwd; hostname;'
+        sh 'ls /go'
+        sh 'go version'
       }
     }
 
