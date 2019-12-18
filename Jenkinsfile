@@ -43,7 +43,7 @@ spec:
         GOPATH="${WORKSPACE}/go" //${sh(script:'cat production-release.txt',returnStdout: true)}"
         echo "${GOPATH}"
         sh 'env | sort'
-        sh 'GOPATH=${env.WORKSPACE}'
+        sh 'GOPATH=env.WORKSPACE'
         sh 'echo $GOPATH'
         sh 'go version'
         sh 'go install wiki'
