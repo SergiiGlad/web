@@ -41,7 +41,11 @@ spec:
         sh 'ls; pwd; hostname;'
         // sh 'printenv | sort'
         GOPATH=${WORKSPACE} //${sh(script:'cat production-release.txt',returnStdout: true)}"
-        echo "GOPATH = ${env.GOPATH}"
+        echo "GOPATH = ${GOPATH}"
+
+        envVars: [
+  envVar(key: 'GOPATH', value: WORKSPACE)
+]),
        
         sh """
             echo ${env.GOPATH}
