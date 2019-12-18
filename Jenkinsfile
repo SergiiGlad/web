@@ -38,16 +38,9 @@ spec:
     
       container('golang') {
         echo "Build Golang app"
-        sh 'ls; pwd; hostname;'
-
-        // set GOPATH to workspace-volume
-        withEnv(["GOPATH=${WORKSPACE}"]) {
-        sh """
-            echo ${env.GOPATH}
-            export GOPATH="${env.GOPATH}"
-            echo $GOPATH
-            CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o main . 
-            ls ${GOPATH}
+    
+        CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o main . 
+         
           
         """
         
