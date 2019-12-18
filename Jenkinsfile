@@ -47,6 +47,9 @@ spec:
       
       container('docker') {
         echo "docker build"
+        sh 'ls'
+        sh 'df -h'
+        sh 'du -sh .'
      
       }
     }
