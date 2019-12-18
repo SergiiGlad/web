@@ -42,7 +42,8 @@ spec:
         sh 'printenv | sort'
         GOPATH="${WORKSPACE}/go" //${sh(script:'cat production-release.txt',returnStdout: true)}"
         echo "${GOPATH}"
-        sh 'GOPATH=env.GOPATH'
+        sh 'env | sort'
+        sh 'GOPATH=${env.WORKSPACE}'
         sh 'echo $GOPATH'
         sh 'go version'
         sh 'go install wiki'
