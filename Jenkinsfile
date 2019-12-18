@@ -45,9 +45,11 @@ spec:
 
     stage('Build docker') {
       
-      container('docker') {
+      container('docker-dind') {
         echo "docker build"
-       
+        sh 'ls'
+        sh 'df -h'
+        sh 'du -sh .'
      
       }
     }
