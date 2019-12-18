@@ -47,6 +47,7 @@ spec:
             echo ${env.GOPATH}
             export GOPATH="${env.GOPATH}/go"
             echo $GOPATH
+            pwd
             go version
             go install wiki
             ls ${GOPATH}
