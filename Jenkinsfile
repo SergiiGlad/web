@@ -77,8 +77,6 @@ spec:
               
             }
         }
-
-
     
     stage('Deploy') {
             container('kubectl') {
