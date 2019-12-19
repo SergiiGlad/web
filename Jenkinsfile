@@ -88,6 +88,7 @@ spec:
                echo "It is pull request"
                echo "Every PR should have build, test, docker image build, docker image push steps with docker tag = pr-number"
                echo "docker image ${DOCKER_IMAGE_NAME}:${BRANCH_NAME} has push"
+
             } else if ( isMaster() ) {
                // is Push to master
                echo "Its push to master"
@@ -95,12 +96,13 @@ spec:
 
                // deploy dev release  
                devRelease()
+
             } else if ( isBuildingTag() ){
                 echo "Every git tag on a master branch is a QA release" 
                 
                 // deploy to test env
 
-                // deployToQA()
+                deployToQA()
                 // integrationTest()
 
              
@@ -140,5 +142,15 @@ def devRelease() {
                     sh 'kubectl rollout restart deploy/wiki-dev -n jenkins'
                 }   
     }            
+}
+
+deployToQA() {
+    stage('QA release') {
+        withKubeConfig([credentialsId: 'kubeconfig']) {
+        sh"""
+            echo ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}
+        """ 
+        }  
+    }
 }
 
