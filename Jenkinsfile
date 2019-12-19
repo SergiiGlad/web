@@ -83,24 +83,29 @@ spec:
     stage('Deploy') {
             container('kubectl') {
 
-            if ( env.BRANCH_NAME ==~  /^PR-\d+$/ ) {
+            if ( isPullRequest() ) {
                 // isPRMergeBuild
-                echo "It is pull request"
-                    
+               echo "It is pull request"
+               echo "Every PR should have build, test, docker image build, docker image push steps with docker tag = pr-number"
+               echo "docker image ${DOCKER_IMAGE_NAME}:${BRANCH_NAME} has push"
             } else if ( isMaster() ) {
-                // is Push to master
-                echo "Its push to master"
-                echo "Every commit to master branch is a dev release"
+               // is Push to master
+               echo "Its push to master"
+               echo "Every commit to master branch is a dev release"
 
-                // deploy dev release  
-                devRelease()
-                 
-       
-            } else if (env.BRANCH_NAME =~ /^v\d.\d.\d$/ ){
-                // isTag    
-                sh 'echo qa release with tag : $(BRANCH_NAME)'
-            // Other operation    
+               // deploy dev release  
+               devRelease()
+            } else if ( isBuildingTag() ){
+                echo "Every git tag on a master branch is a QA release" 
+                
+                // deploy to test env
+
+                // deployToQA()
+                // integrationTest()
+
+             
             } else {
+                // Other operation   
                 sh 'echo push to other branch $(BRANCH_NAME)'
             }
 
@@ -122,10 +127,19 @@ def isMaster() {
     return (env.BRANCH_NAME ==~  /^master$/)
 }
 
+def isPullRequest() {
+    return (env.BRANCH_NAME ==~  /^PR-\d+$/)
+}
+
+def isBuildingTag() {
+    return ( env.BRANCH_NAME ==~ /^v\d.\d.\d$/ )    
+}
+
 def devRelease() {
-    stage 'Dev release'
+    stage ('Dev release') {}
     withKubeConfig([credentialsId: 'kubeconfig']) {
                     sh 'kubectl rollout restart deploy/wiki-dev -n jenkins'
                 }   
+    }            
 }
 
