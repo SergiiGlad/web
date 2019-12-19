@@ -29,7 +29,7 @@ spec:
     command:
       - "cat"
   - name: kubectl
-    image: lachlanevenson/kubectl:1.16.4
+    image: lachlanevenson/kubectl:v1.16.4
     tty: true
     command:
       - "cat"    
@@ -50,7 +50,7 @@ spec:
         }
     }
 
-    stage('Build docker and docker push') {
+    stage('Build and push image') {
       
       container('docker-dind') {
         
