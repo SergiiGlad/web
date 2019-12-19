@@ -29,7 +29,7 @@ spec:
     command:
       - "cat"
   - name: kubectl
-    image: bitnami/kubectl:1.16
+    image: lachlanevenson/kubectl:1.16.4
     tty: true
     command:
       - "cat"    
