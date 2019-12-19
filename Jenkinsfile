@@ -64,14 +64,24 @@ spec:
     
     stage('Deploy') {
         container('helm') {
-               // isPRMergeBuild
+
+            container('helm') {
+                 withKubeConfig([credentialsId: 'kubeconfig']) {
+                 sh 'helm version'
+                 } 
+               
             if ( env.BRANCH_NAME ==~  /^PR-\d+$/ ) {
-                sh 'echo It is pull request'
-                // is Push to master    
+                // isPRMergeBuild
+                echo "It is pull request"
+                    
             } else if (env.BRANCH_NAME ==~  /^master$/) {
-                sh 'echo Its push to master '
-            // isTag    
+                // is Push to master
+                echo "Its push to master"
+                echo "Every commit to master branch is a dev release"
+                sh 'kubectl rollout restart deploy/wiki-dev'
+       
             } else if (env.BRANCH_NAME =~ /^v\d.\d.\d$/ ){
+                // isTag    
                 sh 'echo qa release with tag : $(BRANCH_NAME)'
             // Other operation    
             } else {
