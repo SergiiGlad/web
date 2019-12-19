@@ -57,6 +57,7 @@ spec:
         // Environment variables DOCKER_IMAGE_NAME  set by Jenkins plugins 
         echo "Docker build image name ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
 
+        // check space on disk
         sh 'docker build . -t ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
         
         withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
@@ -90,11 +91,7 @@ spec:
                echo "docker image ${DOCKER_IMAGE_NAME}:${BRANCH_NAME} has push"
 
             } else if ( isMaster() ) {
-               // is Push to master
-               echo "Its push to master"
-               echo "Every commit to master branch is a dev release"
-
-               // deploy dev release  
+                // deploy dev release  
                devRelease()
 
             } else if ( isBuildingTag() ){
@@ -124,7 +121,10 @@ spec:
 }// node
 } //podTemplate
 
+
+// is Push to master branch
 def isMaster() {
+    echo "Its push to master"
     return (env.BRANCH_NAME ==~  /^master$/)
 }
 
@@ -138,13 +138,14 @@ def isBuildingTag() {
 
 def devRelease() {
     stage ('Dev release') {
+    echo "Every commit to master branch is a dev release"
     withKubeConfig([credentialsId: 'kubeconfig']) {
                     sh 'kubectl rollout restart deploy/wiki-dev -n jenkins'
                 }   
     }            
 }
 
-deployToQA() {
+def deployToQA() {
     stage('QA release') {
         withKubeConfig([credentialsId: 'kubeconfig']) {
         sh"""
