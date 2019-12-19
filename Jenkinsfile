@@ -82,7 +82,7 @@ spec:
     
     stage('Deploy') {
             container('kubectl') {
-
+ 
             if ( isPullRequest() ) {
                 // isPRMergeBuild
                echo "It is pull request"
