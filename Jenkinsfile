@@ -45,7 +45,7 @@ spec:
         }
     }
 
-    stage('Build docker') {
+    stage('Build docker and docker push') {
       
       container('docker-dind') {
         
