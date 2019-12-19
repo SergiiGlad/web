@@ -87,7 +87,7 @@ spec:
                 // isPRMergeBuild
                 echo "It is pull request"
                     
-            } else if (env.BRANCH_NAME ==~  /^master$/) {
+            } else if ( isMaster() ) {
                 // is Push to master
                 echo "Its push to master"
                 echo "Every commit to master branch is a dev release"
@@ -118,5 +118,9 @@ spec:
     }
 }// node
 } //podTemplate
+
+def isMaster() {
+    return (env.BRANCH_NAME ==~  /^master$/)
+}
 
 
