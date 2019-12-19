@@ -5,7 +5,6 @@
  */
 
 def label = "jenkins-worker"
-def DOCKER_IMAGE_NAME = "sergeyglad/wiki"
 
 podTemplate(label: label, yaml: """
 apiVersion: v1
@@ -33,6 +32,7 @@ spec:
   ) {
 
   node(label) {
+    
     stage('Checkout SCM') {
         checkout scm
     } 
@@ -49,6 +49,7 @@ spec:
       
       container('docker-dind') {
         
+        // Environment variables DOCKER_IMAGE_NAME  set by Jenkins plugins 
         echo "Docker build image name ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
 
         sh 'docker build . -t ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
