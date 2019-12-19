@@ -81,8 +81,6 @@ spec:
 
                 // deploy wiki-dev 
                 withKubeConfig([credentialsId: 'kubeconfig']) {
-                    sh 'hostname'
-                    sh 'ps aux'
                     sh 'kubectl rollout restart deploy/wiki-dev -n jenkins'
                 }    
        
