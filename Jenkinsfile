@@ -28,6 +28,11 @@ spec:
     tty: true
     command:
       - "cat"
+  - name: kubectl
+    image: bitnami/kubectl:1.16
+    tty: true
+    command:
+      - "cat"    
  """
   ) {
 
@@ -63,7 +68,8 @@ spec:
 
     
     stage('Deploy') {
-            
+            container('kubectl') {
+
             if ( env.BRANCH_NAME ==~  /^PR-\d+$/ ) {
                 // isPRMergeBuild
                 echo "It is pull request"
@@ -88,7 +94,7 @@ spec:
                 sh 'echo push to other branch $(BRANCH_NAME)'
             }
 
-        
+        }
     
    } 
 
