@@ -41,7 +41,7 @@ pipeline {
         stage ('TAG') {
 
            when {
-                        buildingTag()
+                    buildingTag()
                 }
             steps {
                 sh 'echo env.tag' 
