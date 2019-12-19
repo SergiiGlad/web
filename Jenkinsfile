@@ -136,7 +136,7 @@ def isBuildingTag() {
 }
 
 def devRelease() {
-    stage ('Dev release') {}
+    stage ('Dev release') {
     withKubeConfig([credentialsId: 'kubeconfig']) {
                     sh 'kubectl rollout restart deploy/wiki-dev -n jenkins'
                 }   
