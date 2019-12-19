@@ -5,6 +5,8 @@
  */
 
 def label = "jenkins-worker"
+def DOCKER_IMAGE_NAME = "sergeyglad/wiki"
+
 podTemplate(label: label, yaml: """
 apiVersion: v1
 kind: Pod
@@ -35,7 +37,7 @@ spec:
         checkout scm
     } 
 
-    stage('Build and test Golang app') {
+    stage('Build and unit test Golang app') {
         container('golang') {
         
         echo "Build Golang app"
@@ -46,23 +48,18 @@ spec:
     stage('Build docker') {
       
       container('docker-dind') {
-        echo "docker build"
-        sh 'ls'
-        sh 'df -h'
-        sh 'du -sh .'
+        echo "Docker build image name ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
+
+        sh 'docker build . -t ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
+        
+        withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
+            sh 'docker push ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
+        }
      
       }
     }
 
-    stage('test') {
-         
-        echo "TEST+++++++++++"
-
-        sh 'echo $BRANCH_NAME'
-     
-      
-    }
-
+    
     stage('Deploy') {
         container('helm') {
                // isPRMergeBuild
@@ -82,6 +79,14 @@ spec:
         }
     
    } 
+
+   stage('test') {
+         
+        echo "TEST"
+
+     
+      
+    }
 }// node
 } //podTemplate
 
