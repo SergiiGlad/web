@@ -29,7 +29,7 @@ spec:
     command:
       - "cat"
   - name: kubectl
-    image: lachlanevenson/kubectl:v1.16.4
+    image: lachlanevenson/k8s-kubectl:v1.16.4
     tty: true
     command:
       - "cat"    
