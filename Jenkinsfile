@@ -92,10 +92,9 @@ spec:
                 echo "Its push to master"
                 echo "Every commit to master branch is a dev release"
 
-                // deploy wiki-dev 
-                withKubeConfig([credentialsId: 'kubeconfig']) {
-                    sh 'kubectl rollout restart deploy/wiki-dev -n jenkins'
-                }    
+                // deploy dev release  
+                devRelease()
+                 
        
             } else if (env.BRANCH_NAME =~ /^v\d.\d.\d$/ ){
                 // isTag    
@@ -123,4 +122,10 @@ def isMaster() {
     return (env.BRANCH_NAME ==~  /^master$/)
 }
 
+def devRelease() {
+    stage 'Dev release'
+    withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh 'kubectl rollout restart deploy/wiki-dev -n jenkins'
+                }   
+}
 
