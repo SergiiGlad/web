@@ -1,122 +1,145 @@
-pipeline {
+#!/usr/bin/env groovy
+
+/**
+ * This pipeline describes a multi container job, running Docker and Golang builds
+ */
+
+def label = "jenkins-worker"
+
+podTemplate(label: label, yaml: """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: golang
+    image: golang:1.13.0-alpine
+    command:
+      - "cat"
+    tty: true
+  - name: docker-dind
+    image: docker:stable-dind
+    securityContext:
+      privileged: true
+    env:
+      - name: DOCKER_TLS_CERTDIR
+        value: ""  
+  - name: helm
+    image: lachlanevenson/k8s-helm:v2.16.1  
+    tty: true
+    command:
+      - "cat"
+  - name: kubectl
+    image: lachlanevenson/k8s-kubectl:v1.16.4
+    tty: true
+    command:
+      - "cat"    
+ """
+  ) {
+
+  node(label) {
     
-    agent{
-        kubernetes {
-            yamlFile 'podTemplWorker.yaml'
+    stage('Checkout SCM') {
+        checkout scm
+    } 
+
+    stage('Build and unit test Golang app') {
+        container('golang') {
+        
+        echo "Build Golang app"
+        sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o main .'
         }
     }
 
-     environment {
-            //be sure to replace "sergeyglad" with your own Docker Hub username
-            DOCKER_IMAGE_NAME = "sergeyglad/wiki"
-            PROD = ""
-        }
-
-    stages {
+    stage('Build and push image') {
       
-
-        stage('Build Golang project') {
-          steps{
-            sh 'echo "go build"'
-          }
-        }
-        stage('Build Dockerfile') {
-       
-            steps {
-                container('docker') {
-                     
-                    sh 'echo "Building Dockerfile"'
-                    // docker.Image.build
-                    // DOCKER_BUILDKIT=1 
-
-                    sh 'pwd'
-                    sh 'ls'
-                    sh 'echo Branch Name: ${BRANCH_NAME}'
-                    sh 'echo Change ID: ${CHANGE_ID}'
-                    //sh 'docker build . -t ${DOCKER_IMAGE_NAME} --cache-from ${DOCKER_IMAGE_NAME}'
-                }
-            }    
-        }            
-
-        stage ('TAG') {
-
-           when {
-                    buildingTag()
-                }
-            steps {
-                sh 'echo env.tag' 
-            }            
-
-        }
-
-        stage ('Change file production-release.txt ')  {
-            when { 
-                allOf{
-                changeRequest target: 'master';
-                changeset pattern: 'production-release.txt", comparator: "REGEXP'
-                }
-            }
-
-            steps {
-                sh 'echo production release ' 
-                sh '${PROD}=$(cat production-release.txt)'
-                sh 'echo ${PROD}'
-            }
-        }
+      container('docker-dind') {
         
-        stage('Push to Docker hub') {
+        // Environment variables DOCKER_IMAGE_NAME  set by Jenkins plugins 
+        echo "Docker build image name ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
 
-                    
-                steps {
-
-                    echo "Build docker image"
-                    container('docker') {
-                        withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-                            
-                        }
-
-                    sh 'echo Branch Name: ${BRANCH_NAME}'
-                    sh 'echo Change ID: ${CHANGE_ID}'
-               
-
-                 }   
-
-                 script {
-                                
-                                // isPRMergeBuild
-                                if ( env.BRANCH_NAME ==~  /^PR-\d+$/ ) {
-                                    sh 'echo It is pull request'
-                                // is Push to master    
-                                } else if (env.BRANCH_NAME ==~  /^master$/) {
-                                    sh 'echo It\'s push to master '
-                                // isTag    
-                                } else if (env.BRANCH_NAME =~ /^v\d.\d.\d$/ ){
-                                    sh 'echo qa release with tag : $(BRANCH_NAME)'
-                                // Other operation    
-                                } else {
-                                    sh 'echo push to other branch $(BRANCH_NAME)'
-                                }
-                                   
-                            }
-                }
-            }
+        sh 'docker build . -t ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
         
-        stage('Test') {
-            steps {
-                container('docker') {
-                    echo 'go testing...'
-                }    
-            }
+        withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
+            sh 'docker push ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
+     
+      }
+    }
+
+
+    stage('Deploy') {
+          
+                echo "Deploying...."
                 container('helm') {
                  withKubeConfig([credentialsId: 'kubeconfig']) {
-                 sh 'helm version'
+                    sh 'helm version'
                  } 
-               }
+              
             }
         }
+
+
+    
+    stage('Deploy') {
+            container('kubectl') {
+
+            if ( isPullRequest() ) {
+                // isPRMergeBuild
+               echo "It is pull request"
+               echo "Every PR should have build, test, docker image build, docker image push steps with docker tag = pr-number"
+               echo "docker image ${DOCKER_IMAGE_NAME}:${BRANCH_NAME} has push"
+            } else if ( isMaster() ) {
+               // is Push to master
+               echo "Its push to master"
+               echo "Every commit to master branch is a dev release"
+
+               // deploy dev release  
+               devRelease()
+            } else if ( isBuildingTag() ){
+                echo "Every git tag on a master branch is a QA release" 
+                
+                // deploy to test env
+
+                // deployToQA()
+                // integrationTest()
+
+             
+            } else {
+                // Other operation   
+                sh 'echo push to other branch $(BRANCH_NAME)'
+            }
+
+        }
+    
+   } 
+
+   stage('test') {
+         
+        echo "TEST"
+
+     
+      
     }
+}// node
+} //podTemplate
+
+def isMaster() {
+    return (env.BRANCH_NAME ==~  /^master$/)
 }
+
+def isPullRequest() {
+    return (env.BRANCH_NAME ==~  /^PR-\d+$/)
+}
+
+def isBuildingTag() {
+    return ( env.BRANCH_NAME ==~ /^v\d.\d.\d$/ )    
+}
+
+def devRelease() {
+    stage ('Dev release') {
+    withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh 'kubectl rollout restart deploy/wiki-dev -n jenkins'
+                }   
+    }            
+}
+
