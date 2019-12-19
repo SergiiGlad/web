@@ -110,8 +110,7 @@ spec:
             }
 
         }
-    
-   } 
+    } 
 
    stage('test') {
          
