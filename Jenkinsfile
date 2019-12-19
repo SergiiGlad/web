@@ -69,7 +69,7 @@ spec:
 
     stage('Deploy') {
             steps {
-                echo "Deploying....""
+                echo "Deploying...."
                 container('helm') {
                  withKubeConfig([credentialsId: 'kubeconfig']) {
                     sh 'helm version'
