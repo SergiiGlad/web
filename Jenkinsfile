@@ -64,12 +64,7 @@ spec:
     
     stage('Deploy') {
         container('helm') {
-
-          
-                 
-                 sh 'helm version'
-                 } 
-               
+             
             if ( env.BRANCH_NAME ==~  /^PR-\d+$/ ) {
                 // isPRMergeBuild
                 echo "It is pull request"
