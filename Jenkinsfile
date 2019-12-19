@@ -92,14 +92,15 @@ spec:
 
             } else if ( isMaster() ) {
                 // deploy dev release  
+               echo "Every commit to master branch is a dev release" 
                devRelease()
 
             } else if ( isBuildingTag() ){
                 echo "Every git tag on a master branch is a QA release" 
-                
+                stage('Checkout SCM')
                 // deploy to test env
-
                 deployToQA()
+                
                 // integrationTest()
 
              
@@ -133,15 +134,16 @@ def isPullRequest() {
 }
 
 def isBuildingTag() {
+
+    // check master
     return ( env.BRANCH_NAME ==~ /^v\d.\d.\d$/ )    
 }
 
 def devRelease() {
     stage ('Dev release') {
-    echo "Every commit to master branch is a dev release"
-    withKubeConfig([credentialsId: 'kubeconfig']) {
-                    sh 'kubectl rollout restart deploy/wiki-dev -n jenkins'
-                }   
+        withKubeConfig([credentialsId: 'kubeconfig']) {
+            sh 'kubectl rollout restart deploy/wiki-dev -n jenkins'
+        }   
     }            
 }
 
