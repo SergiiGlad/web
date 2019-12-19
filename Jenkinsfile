@@ -63,8 +63,7 @@ spec:
 
     
     stage('Deploy') {
-        container('helm') {
-             
+            
             if ( env.BRANCH_NAME ==~  /^PR-\d+$/ ) {
                 // isPRMergeBuild
                 echo "It is pull request"
@@ -76,7 +75,7 @@ spec:
 
                 // deploy wiki-dev 
                 withKubeConfig([credentialsId: 'kubeconfig']) {
-                    sh 'kubectl rollout restart deploy/wiki-dev'
+                    sh 'kubectl rollout restart deploy/wiki-dev -n jenkins'
                 }    
        
             } else if (env.BRANCH_NAME =~ /^v\d.\d.\d$/ ){
@@ -87,7 +86,7 @@ spec:
                 sh 'echo push to other branch $(BRANCH_NAME)'
             }
 
-        }
+        
     
    } 
 
