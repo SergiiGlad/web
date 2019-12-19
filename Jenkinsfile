@@ -48,6 +48,7 @@ spec:
     stage('Build docker') {
       
       container('docker-dind') {
+        
         echo "Docker build image name ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
 
         sh 'docker build . -t ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
