@@ -66,6 +66,19 @@ spec:
       }
     }
 
+
+    stage('Deploy') {
+            steps {
+                echo "Deploying....""
+                container('helm') {
+                 withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh 'helm version'
+                 } 
+               }
+            }
+        }
+
+
     
     stage('Deploy') {
             container('kubectl') {
