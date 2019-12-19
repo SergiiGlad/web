@@ -65,8 +65,8 @@ spec:
     stage('Deploy') {
         container('helm') {
 
-            container('helm') {
-                 withKubeConfig([credentialsId: 'kubeconfig']) {
+          
+                 
                  sh 'helm version'
                  } 
                
@@ -78,7 +78,11 @@ spec:
                 // is Push to master
                 echo "Its push to master"
                 echo "Every commit to master branch is a dev release"
-                sh 'kubectl rollout restart deploy/wiki-dev'
+
+                // deploy wiki-dev 
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh 'kubectl rollout restart deploy/wiki-dev'
+                }    
        
             } else if (env.BRANCH_NAME =~ /^v\d.\d.\d$/ ){
                 // isTag    
