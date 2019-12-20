@@ -168,7 +168,7 @@ def isChangeSet() {
 }
 
 def prodRelease() {
-    stage('Poductiob Release') {
+    stage('Poduction Release') {
         def changeLogSets = currentBuild.changeSets
            for (int i = 0; i < changeLogSets.size(); i++) {
            def entries = changeLogSets[i].items
@@ -179,6 +179,9 @@ def prodRelease() {
                for (int k = 0; k < files.size(); k++) {
                    def file = files[k]
                    echo " ${file.editType.name} ${file.path}"
+                   if file.path.equals("production-release.txt") {
+                       echo "TRUE"
+                   }
                }
             }
            }
