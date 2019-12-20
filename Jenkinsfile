@@ -164,27 +164,27 @@ def deployToQA() {
 
 def isChangeSet() {
     
-    return true
-}
-
-def prodRelease() {
-    stage('Poduction Release') {
-        def changeLogSets = currentBuild.changeSets
+    def changeLogSets = currentBuild.changeSets
            for (int i = 0; i < changeLogSets.size(); i++) {
            def entries = changeLogSets[i].items
            for (int j = 0; j < entries.length; j++) {
-               def entry = entries[j]
-               echo "${entry.commitId} by ${entry.author} on ${new Date(entry.timestamp)}: ${entry.msg}"
-               def files = new ArrayList(entry.affectedFiles)
+               def files = new ArrayList(entries[j].affectedFiles)
                for (int k = 0; k < files.size(); k++) {
                    def file = files[k]
                    echo " ${file.editType.name} ${file.path}"
                    if (file.path.equals("production-release.txt")) {
-                       echo "TRUE"
+                       return true
                    }
                }
             }
-           }
+    }
+
+    return false
+}
+
+def prodRelease() {
+    stage('Poduction Release') {
+        echo "${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
     }
 }
 
