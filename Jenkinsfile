@@ -88,8 +88,10 @@ spec:
                 echo "containing a git tag that should be released to production environment"
 
                 tagDockerImage = "${sh(script:'cat production-release.txt',returnStdout: true)}"
-                nameStage = "wiki-prod"
+                //? need check is tag exist
 
+                nameStage = "wiki-prod"
+            
             } else if ( isMaster() ) {
               
                echo "Every commit to master branch is a dev release" 
