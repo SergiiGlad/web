@@ -54,7 +54,15 @@ spec:
       
       container('docker-dind') {
         
+        //
         // Environment variables DOCKER_IMAGE_NAME  set by Jenkins plugins 
+        // 
+        // BRANCH_NAME = master
+        // BRANCH_NAME = PR_1
+        // BRANCH_NAME = develop
+        // BRANCH_NAME = v0.0.1
+        //
+
         echo "Docker build image name ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
 
         // check space on disk
@@ -66,19 +74,6 @@ spec:
      
       }
     }
-
-
-    stage('Deploy via Helm') {
-          
-                echo "Deploying...."
-                container('helm') {
-                 withKubeConfig([credentialsId: 'kubeconfig']) {
-                    sh 'helm version'
-                 } 
-              
-            }
-        }
-
 
     
     stage('Deploy via kubectl') {
@@ -110,8 +105,10 @@ spec:
             
                 echo "Production release controlled by a change to production-release.txt file in application repository root," 
                 echo "containing a git tag that should be released to production environment"
-                
-                prodRelease()
+
+                tagPROD="${sh(script:'cat production-release.txt',returnStdout: true)}"
+               
+                deploy( ${tagPROD}, "wiki-prod" )
             } 
 
         }
@@ -155,14 +152,6 @@ def isChangeSet() {
 
     return false
 }
-
-def prodRelease() {
-   
-        PROD="${sh(script:'cat production-release.txt',returnStdout: true)}"
-        echo "${DOCKER_IMAGE_NAME}:${PROD}"
-    
-}
-
 
 def deploy( tagName, appName ) {
   
