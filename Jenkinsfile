@@ -81,7 +81,19 @@ spec:
 
             
             if ( isMaster() ) {
-                // deploy dev release  
+             
+            
+            if ( isChangeSet() ) {
+            
+                echo "Production release controlled by a change to production-release.txt file in application repository root," 
+                echo "containing a git tag that should be released to production environment"
+
+                tagPROD="${sh(script:'cat production-release.txt',returnStdout: true)}"
+               
+                deploy( tagPROD, "wiki-prod" )
+                
+            } else if ( isMaster() ) {
+               // deploy dev release  
                echo "Every commit to master branch is a dev release" 
                echo "Its push to master"
                echo "Dev release image: ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
@@ -99,17 +111,7 @@ spec:
                 // integrationTest 
                 // stage('approve'){ input "OK to go?" }
                    
-            }
-            
-            if ( isChangeSet() ) {
-            
-                echo "Production release controlled by a change to production-release.txt file in application repository root," 
-                echo "containing a git tag that should be released to production environment"
-
-                tagPROD="${sh(script:'cat production-release.txt',returnStdout: true)}"
-               
-                deploy( ${tagPROD}, "wiki-prod" )
-            } 
+            }    
 
         }
     } 
