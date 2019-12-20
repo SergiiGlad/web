@@ -50,7 +50,7 @@ spec:
         }
     }
 
-    stage('Build and push image') {
+    stage('Docker build and push image') {
       
       container('docker-dind') {
         
@@ -58,7 +58,7 @@ spec:
         // Environment variables DOCKER_IMAGE_NAME  set by Jenkins plugins 
         // 
         // BRANCH_NAME = master
-        // BRANCH_NAME = PR_1
+        // BRANCH_NAME = PR-1
         // BRANCH_NAME = develop
         // BRANCH_NAME = v0.0.1
         //
@@ -91,8 +91,9 @@ spec:
                 //? need check is tag exist
 
                 nameStage = "wiki-prod"
-            
-            } else if ( isMaster() ) {
+
+                          
+            }  else if ( isMaster() ) {
               
                echo "Every commit to master branch is a dev release" 
                echo "Its push to master"
@@ -127,7 +128,7 @@ spec:
 
 // is Push to master branch
 def isMaster() {
-    return (env.BRANCH_NAME ==~  /^master$/)
+    return (env.BRANCH_NAME == "master" )
 }
 
 def isPullRequest() {
@@ -149,7 +150,6 @@ def isChangeSet() {
                def files = new ArrayList(entries[j].affectedFiles)
                for (int k = 0; k < files.size(); k++) {
                    def file = files[k]
-                   echo " ${file.editType.name} ${file.path}"
                    if (file.path.equals("production-release.txt")) {
                        return true
                    }
