@@ -82,19 +82,15 @@ spec:
 
     
     stage('Deploy') {
-            container('kubectl') {
+        container('kubectl') {
 
-            if ( isPullRequest() ) {
-                // isPRMergeBuild
-               echo "It is pull request"
-               echo "Every PR should have build, test, docker image build, docker image push steps with docker tag = pr-number"
-               echo "docker image ${DOCKER_IMAGE_NAME}:${BRANCH_NAME} has push"
-
-            } else if ( isMaster() ) {
+            
+            if ( isMaster() ) {
                 // deploy dev release  
                echo "Every commit to master branch is a dev release" 
                echo "Its push to master"
                echo "Dev release image: ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
+               
                deploy( env.BRANCH_NAME, "wiki-dev" )
 
             } else if ( isBuildingTag() ){
@@ -161,25 +157,25 @@ def isChangeSet() {
 }
 
 def prodRelease() {
-    stage('Poduction Release') {
+   
         PROD="${sh(script:'cat production-release.txt',returnStdout: true)}"
         echo "${DOCKER_IMAGE_NAME}:${PROD}"
-    }
+    
 }
 
 
 def deploy( tagName, appName ) {
-    stage('QA release') {
+  
         withKubeConfig([credentialsId: 'kubeconfig']) {
         sh"""
            
             kubectl delete deploy ${appName} --wait -n jenkins
             kubectl delete svc ${appName} --wait -n jenkins
-            kubectl run ${appName} -n jenkins --image=${DOCKER_IMAGE_NAME}:${tagName} --port=3000 --labels="wiki=qa" --image-pull-policy=Always
+            kubectl run ${appName} -n jenkins --image=${DOCKER_IMAGE_NAME}:${tagName} --port=3000 --labels="app=${appName}" --image-pull-policy=Always
             kubectl expose -n jenkins deploy/${appName} --port=3000 --target-port=3000 --type=NodePort 
             kubectl get svc -n jenkins
 
         """ 
         }  
-    }
+  
 }
