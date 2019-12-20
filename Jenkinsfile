@@ -79,10 +79,7 @@ spec:
     stage('Deploy via kubectl') {
         container('kubectl') {
 
-            
-            if ( isMaster() ) {
-             
-            
+                  
             if ( isChangeSet() ) {
             
                 echo "Production release controlled by a change to production-release.txt file in application repository root," 
@@ -91,7 +88,7 @@ spec:
                 tagPROD="${sh(script:'cat production-release.txt',returnStdout: true)}"
                
                 deploy( tagPROD, "wiki-prod" )
-                
+
             } else if ( isMaster() ) {
                // deploy dev release  
                echo "Every commit to master branch is a dev release" 
