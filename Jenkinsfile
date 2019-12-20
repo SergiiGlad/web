@@ -104,20 +104,17 @@ spec:
                 
                 // integrationTest 
                 // stage('approve'){ input "OK to go?" }
-
-                
-
-             
-            } else {
-
-                // Other   
-                sh 'echo push to other branch $(BRANCH_NAME)'
+                   
             }
             
             if ( isChangeSet() ) {
             
                 echo "Production release controlled by a change to production-release.txt file in application repository root," 
                 echo "containing a git tag that should be released to production environment"
+                
+                def changeLogSets = currentBuild.changeSets
+                echo "changeLogSets"
+                echo changeLogSets
             } 
 
         }
@@ -175,8 +172,7 @@ def deployToQA() {
 }
 
 def isChangeSet() {
-    def changeLogSets = currentBuild.changeSets
-    echo "changeLogSets"
+    
     return true
 }
 
