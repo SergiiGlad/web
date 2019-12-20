@@ -179,7 +179,7 @@ def prodRelease() {
                for (int k = 0; k < files.size(); k++) {
                    def file = files[k]
                    echo " ${file.editType.name} ${file.path}"
-                   if file.path.equals("production-release.txt") {
+                   if (file.path.equals("production-release.txt")) {
                        echo "TRUE"
                    }
                }
