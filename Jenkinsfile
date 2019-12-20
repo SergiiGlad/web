@@ -79,6 +79,8 @@ spec:
     stage('Deploy via kubectl') {
         container('kubectl') {
 
+            def tagDockerImage
+            def nameStage
                   
             if ( isChangeSet() ) {
             
@@ -89,14 +91,17 @@ spec:
                
                 deploy( tagPROD, "wiki-prod" )
 
-            } else if ( isMaster() ) {
+            } 
+            
+            if ( isMaster() ) {
                // deploy dev release  
                echo "Every commit to master branch is a dev release" 
                echo "Its push to master"
                echo "Dev release image: ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
-               
-               deploy( env.BRANCH_NAME, "wiki-dev" )
 
+               tagDockerImage = env.BRANCH_NAME
+               nameStage = "wiki-dev"
+               
             } else if ( isBuildingTag() ){
                 echo "Every git tag on a master branch is a QA release" 
                 echo "QA release image: ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
@@ -109,6 +114,8 @@ spec:
                 // stage('approve'){ input "OK to go?" }
                    
             }    
+
+            deploy( tagDockerImage, nameStage )
 
         }
     } 
