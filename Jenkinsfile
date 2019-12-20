@@ -68,7 +68,7 @@ spec:
     }
 
 
-    stage('Deploy') {
+    stage('Deploy via Helm') {
           
                 echo "Deploying...."
                 container('helm') {
@@ -81,7 +81,7 @@ spec:
 
 
     
-    stage('Deploy') {
+    stage('Deploy via kubectl') {
         container('kubectl') {
 
             
