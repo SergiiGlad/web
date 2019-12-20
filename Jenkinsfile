@@ -93,6 +93,8 @@ spec:
             } else if ( isMaster() ) {
                 // deploy dev release  
                echo "Every commit to master branch is a dev release" 
+               echo "Its push to master"
+               echo "Dev release image: ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
                devRelease()
 
             } else if ( isBuildingTag() ){
@@ -101,7 +103,7 @@ spec:
                 
                 // deploy to test env
                 // You should start build tag manually
-                deploy( env.BRANCH_NAME )
+                deploy( env.BRANCH_NAME, "wiki-qa" )
                 
                 // integrationTest 
                 // stage('approve'){ input "OK to go?" }
@@ -125,7 +127,6 @@ spec:
 
 // is Push to master branch
 def isMaster() {
-    echo "Its push to master"
     return (env.BRANCH_NAME ==~  /^master$/)
 }
 
@@ -135,7 +136,7 @@ def isPullRequest() {
 
 def isBuildingTag() {
 
-    // check master
+    // add check that  is branch master?
     return ( env.BRANCH_NAME ==~ /^v\d.\d.\d$/ )    
 }
 
@@ -191,7 +192,7 @@ def prodRelease() {
 }
 
 
-def deploy( tagName ) {
+def deploy( tagName, appName ) {
     stage('QA release') {
         withKubeConfig([credentialsId: 'kubeconfig']) {
         sh"""
@@ -199,7 +200,7 @@ def deploy( tagName ) {
             kubectl delete deploy wiki-qa --wait -n jenkins
             kubectl delete svc wiki-qa --wait -n jenkins
             kubectl run wiki-qa -n jenkins --image=${DOCKER_IMAGE_NAME}:${tagName} --port=3000 --labels="wiki=qa" --image-pull-policy=Always
-            kubectl expose -n jenkins deploy/wiki-qa --port=3000 --target-port=3000 --type=NodePort 
+            kubectl expose -n jenkins deploy/${appName} --port=3000 --target-port=3000 --type=NodePort 
             kubectl get svc -n jenkins
 
         """ 
