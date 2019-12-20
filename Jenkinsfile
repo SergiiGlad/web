@@ -87,9 +87,8 @@ spec:
                 echo "Production release controlled by a change to production-release.txt file in application repository root," 
                 echo "containing a git tag that should be released to production environment"
 
-                tagPROD="${sh(script:'cat production-release.txt',returnStdout: true)}"
-               
-                deploy( tagPROD, "wiki-prod" )
+                tagDockerImage = "${sh(script:'cat production-release.txt',returnStdout: true)}"
+                nameStage = "wiki-prod"
 
             } 
             
