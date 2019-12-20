@@ -97,10 +97,11 @@ spec:
 
             } else if ( isBuildingTag() ){
                 echo "Every git tag on a master branch is a QA release" 
+                echo "QA release image: ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
                 
                 // deploy to test env
                 // You should start build tag manually
-                deployToQA()
+                deploy( env.BRANCH_NAME )
                 
                 // integrationTest 
                 // stage('approve'){ input "OK to go?" }
@@ -189,3 +190,19 @@ def prodRelease() {
     }
 }
 
+
+def deploy( tagName ) {
+    stage('QA release') {
+        withKubeConfig([credentialsId: 'kubeconfig']) {
+        sh"""
+           
+            kubectl delete deploy wiki-qa --wait -n jenkins
+            kubectl delete svc wiki-qa --wait -n jenkins
+            kubectl run wiki-qa -n jenkins --image=${DOCKER_IMAGE_NAME}:${tagName} --port=3000 --labels="wiki=qa" --image-pull-policy=Always
+            kubectl expose -n jenkins deploy/wiki-qa --port=3000 --target-port=3000 --type=NodePort 
+            kubectl get svc -n jenkins
+
+        """ 
+        }  
+    }
+}
