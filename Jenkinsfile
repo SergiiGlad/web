@@ -184,7 +184,8 @@ def isChangeSet() {
 
 def prodRelease() {
     stage('Poduction Release') {
-        echo "${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
+        PROD="${sh(script:'cat production-release.txt',returnStdout: true)}"
+        echo "${DOCKER_IMAGE_NAME}:${PROD}"
     }
 }
 
