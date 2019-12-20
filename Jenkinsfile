@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 /**
- * This pipeline describes a multi container job, running Docker and Golang builds
+ * This pipeline describes a CI/CD process for running Golang app to multi stages environment
  */
 
 def label = "jenkins-worker"
