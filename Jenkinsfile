@@ -108,8 +108,13 @@ spec:
                 
 
              
+            } else if ( isChangeSet() ) {
+            
+                echo "Production release controlled by a change to production-release.txt file in application repository root," 
+                echo "containing a git tag that should be released to production environment"
             } else {
-                // Other operation   
+
+                // Other   
                 sh 'echo push to other branch $(BRANCH_NAME)'
             }
 
@@ -165,5 +170,11 @@ def deployToQA() {
         """ 
         }  
     }
+}
+
+def isChangeSet() {
+    def changeLogSets = currentBuild.changeSets
+    echo "changeLogSets"
+    return true
 }
 
