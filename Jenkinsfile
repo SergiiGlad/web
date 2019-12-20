@@ -95,7 +95,7 @@ spec:
                echo "Every commit to master branch is a dev release" 
                echo "Its push to master"
                echo "Dev release image: ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
-               devRelease()
+               deploy( env.BRANCH_NAME, "wiki-dev" )
 
             } else if ( isBuildingTag() ){
                 echo "Every git tag on a master branch is a QA release" 
@@ -140,30 +140,6 @@ def isBuildingTag() {
     return ( env.BRANCH_NAME ==~ /^v\d.\d.\d$/ )    
 }
 
-def devRelease() {
-    stage ('Dev release') {
-        withKubeConfig([credentialsId: 'kubeconfig']) {
-            sh 'kubectl rollout restart deploy/wiki-dev -n jenkins'
-        }   
-    }            
-}
-
-def deployToQA() {
-    stage('QA release') {
-        withKubeConfig([credentialsId: 'kubeconfig']) {
-        sh"""
-            echo "QA release image: ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
-            kubectl delete deploy wiki-qa --wait -n jenkins
-            kubectl delete svc wiki-qa --wait -n jenkins
-            kubectl run wiki-qa -n jenkins --image=${DOCKER_IMAGE_NAME}:${BRANCH_NAME} --port=3000 --labels="wiki=qa" --image-pull-policy=Always
-            kubectl expose -n jenkins deploy/wiki-qa --port=3000 --target-port=3000 --type=NodePort 
-            kubectl get svc -n jenkins
-
-        """ 
-        }  
-    }
-}
-
 def isChangeSet() {
     
     def changeLogSets = currentBuild.changeSets
@@ -197,9 +173,9 @@ def deploy( tagName, appName ) {
         withKubeConfig([credentialsId: 'kubeconfig']) {
         sh"""
            
-            kubectl delete deploy wiki-qa --wait -n jenkins
-            kubectl delete svc wiki-qa --wait -n jenkins
-            kubectl run wiki-qa -n jenkins --image=${DOCKER_IMAGE_NAME}:${tagName} --port=3000 --labels="wiki=qa" --image-pull-policy=Always
+            kubectl delete deploy ${appName} --wait -n jenkins
+            kubectl delete svc ${appName} --wait -n jenkins
+            kubectl run ${appName} -n jenkins --image=${DOCKER_IMAGE_NAME}:${tagName} --port=3000 --labels="wiki=qa" --image-pull-policy=Always
             kubectl expose -n jenkins deploy/${appName} --port=3000 --target-port=3000 --type=NodePort 
             kubectl get svc -n jenkins
 
