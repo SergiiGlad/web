@@ -90,9 +90,7 @@ spec:
                 tagDockerImage = "${sh(script:'cat production-release.txt',returnStdout: true)}"
                 nameStage = "wiki-prod"
 
-            } 
-            
-            if ( isMaster() ) {
+            } else if ( isMaster() ) {
               
                echo "Every commit to master branch is a dev release" 
                echo "Its push to master"
