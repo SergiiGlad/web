@@ -113,8 +113,9 @@ spec:
                    
             }    
 
-            echo "Message"
-                       
+            echo "Release image: ${DOCKER_IMAGE_NAME}:${tagDockerImage}"
+            echo "Deploy app name: ${nameStage}"
+            
             // Deploy to Kubernetes cluster
             deploy( tagDockerImage, nameStage )
 
