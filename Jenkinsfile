@@ -114,8 +114,7 @@ spec:
             }    
 
             echo "Message"
-            echo nameStage "release image: ${DOCKER_IMAGE_NAME}:" tagDockerImage
-            
+                       
             // Deploy to Kubernetes cluster
             deploy( tagDockerImage, nameStage )
 
