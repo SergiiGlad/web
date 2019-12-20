@@ -94,27 +94,28 @@ spec:
             } 
             
             if ( isMaster() ) {
-               // deploy dev release  
+              
                echo "Every commit to master branch is a dev release" 
                echo "Its push to master"
-               echo "Dev release image: ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
-
+               
                tagDockerImage = env.BRANCH_NAME
                nameStage = "wiki-dev"
                
             } else if ( isBuildingTag() ){
-                echo "Every git tag on a master branch is a QA release" 
-                echo "QA release image: ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
                 
-                // deploy to test env
-                // You should start build tag manually
-                deploy( env.BRANCH_NAME, "wiki-qa" )
+                echo "Every git tag on a master branch is a QA release" 
+                
+                tagDockerImage = env.BRANCH_NAME
+                nameStage = "wiki-qa"
                 
                 // integrationTest 
                 // stage('approve'){ input "OK to go?" }
                    
             }    
 
+            echo nameStage "release image: ${DOCKER_IMAGE_NAME}:" tagDockerImage
+            
+            // Deploy to Kubernetes cluster
             deploy( tagDockerImage, nameStage )
 
         }
