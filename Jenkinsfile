@@ -42,19 +42,20 @@ spec:
         checkout scm
     }
 
-     container('golang') {
-
-        stage('Build  Golang app') {
+    stage('Build  Golang app') {
+        container('golang') {
             echo "Build Golang app"
             sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o main .'
-        }
+        }    
+    }
 
-        stage ('Unit test Golang app')  {
+    stage ('Unit test Golang app')  {
+        container('golang') { 
             echo "Unit test Golang app"
         }
     }    
 
-    stage('Docker build and push image') {
+    stage('Docker build') {
       
       container('docker-dind') {
         
