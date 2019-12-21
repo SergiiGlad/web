@@ -9,12 +9,9 @@ metadata:
   name: "jnlp-slave-lhnx1"
 spec:
   containers:
-  - args:
-    - "********"
-    - "jnlp-slave-lhnx1"
-    env:
+  - env:
     - name: "JENKINS_SECRET"
-      value: "********"
+      value: "cWF6d3N4ZWRj"
     - name: "JENKINS_TUNNEL"
       value: "jenkins-agent:50000"
     - name: "JENKINS_AGENT_NAME"

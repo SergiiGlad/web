@@ -65,22 +65,26 @@ spec:
         //
         // Environment variables DOCKER_IMAGE_NAME  set by Jenkins plugins 
         // 
-        // BRANCH_NAME = master
-        // BRANCH_NAME = PR-1
-        // BRANCH_NAME = develop
-        // BRANCH_NAME = v0.0.1
+        // BRANCH_NAME = master  - master branch
+        // BRANCH_NAME = PR-1    - pull request
+        // BRANCH_NAME = develop - other branch
+        // BRANCH_NAME = v0.0.1  - git tag
         //
 
         echo "Docker build image name ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
-
-        // check space on disk
         sh 'docker build . -t ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
-        
-        withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-            sh 'docker push ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
         }
-     
-      }
+    }
+
+    stage ('Docker push') {
+        if ( not isPullRequest() ) {
+            container('docker-dind') {
+                sh 'docker image ls' 
+                withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
+                    sh 'docker push ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
+                }
+            }    
+        }    
     }
 
     
