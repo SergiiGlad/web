@@ -4,7 +4,7 @@
  * This pipeline describes a CI/CD process for running Golang app to multi stages environment
  */
 
-def label = "jenkins-worker"
+def label = "jenkins-worker-${UUID.randomUUID().toString()}"
 
 podTemplate(label: label, yaml: """
 apiVersion: v1
@@ -38,10 +38,6 @@ spec:
 
   node(label) {
     
-    stage('Checkout SCM') {
-        checkout scm
-    } 
-
     stage('Build and unit test Golang app') {
         container('golang') {
         
