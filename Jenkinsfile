@@ -208,11 +208,7 @@ def deploy( tagName, appName ) {
 }
 
 def exitAsSuccess() {
-     try {
-      sh 'exit 0'
-    }
-    catch (e) {
-      echo 'Exit from pipeline'
+    
       throw e
-    }
+    
 }
