@@ -213,6 +213,6 @@ def exitAsSuccess() {
     }
     catch (e) {
       echo 'Exit from pipeline'
-      throw
+      throw e
     }
 }
