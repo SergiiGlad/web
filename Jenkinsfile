@@ -84,7 +84,7 @@ spec:
           
           // if not PR  -  pull request  
           if ( isPullRequest() ) {
-                currentBuild.getRawBuild().getExecutor().interrupt(Result.SUCCESS)
+                exitAsSuccess() 
             }   
           
             withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
@@ -92,7 +92,7 @@ spec:
             }
 
             if ( isPushtoFeatureBranch() ) {
-                currentBuild.getRawBuild().getExecutor().interrupt(Result.SUCCESS)
+                exitAsSuccess() 
             }
         }    
 
@@ -205,4 +205,14 @@ def deploy( tagName, appName ) {
         """ 
         }  
   
+}
+
+def exitAsSuccess() {
+     try {
+      sh 'exit 0'
+    }
+    catch (e) {
+      echo 'Exit from pipeline'
+      throw
+    }
 }
