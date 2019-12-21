@@ -59,7 +59,6 @@ spec:
     }    
 
     stage('Docker build') {
-      
       container('docker-dind') {
         
         //
@@ -101,8 +100,7 @@ spec:
     }
 
     
-    stage('Deploy via kubectl') {
-        container('kubectl') {
+    container('kubectl') {
 
             def tagDockerImage
             def nameStage
@@ -145,7 +143,7 @@ spec:
             deploy( tagDockerImage, nameStage )
 
         }
-    } 
+     
 
   }// node
 } //podTemplate
