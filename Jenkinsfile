@@ -77,7 +77,9 @@ spec:
     }
 
     stage ('Docker push') {
-        if ( not isPullRequest() ) {
+
+        // if not PR
+        if ( ! isPullRequest() ) {
             container('docker-dind') {
                 sh 'docker image ls' 
                 withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
