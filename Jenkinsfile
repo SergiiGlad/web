@@ -84,7 +84,7 @@ spec:
           
           // if not PR  -  pull request  
           if ( isPullRequest() ) {
-                currentBuild.result = 'SUCCESS'
+                currentBuild.getRawBuild().getExecutor().interrupt(Result.SUCCESS)
             }   
           
             withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
@@ -92,7 +92,7 @@ spec:
             }
 
             if ( isPushtoFeatureBranch() ) {
-                currentBuild.result = 'SUCCESS'
+                currentBuild.getRawBuild().getExecutor().interrupt(Result.SUCCESS)
             }
         }    
 
