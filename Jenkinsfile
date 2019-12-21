@@ -78,7 +78,7 @@ spec:
 
     stage ('Docker push') {
 
-        // if not PR
+        // if not PR - pull request
         if ( ! isPullRequest() ) {
             container('docker-dind') {
                 sh 'docker image ls' 
