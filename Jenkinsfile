@@ -83,6 +83,8 @@ spec:
                return 0
     }   
 
+    
+
     stage ('Docker push') {
 
         container('docker-dind') {
@@ -96,16 +98,13 @@ spec:
                 sh 'docker push ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
             }
 
-            if ( isPushtoFeatureBranch() ) {
-                //exitAsSuccess() 
-                Utils.markStageSkippedForConditional('Deploy via kubectl')
-            }
+            
         }    
+    }
 
-          
-
-        
-        
+    if ( isPushtoFeatureBranch() ) {
+                //exitAsSuccess() 
+                 return 0
     }
 
     
