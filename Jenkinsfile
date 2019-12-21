@@ -4,7 +4,10 @@
  * This pipeline describes a CI/CD process for running Golang app to multi stages environment
  */
 
+env.DOCKER_IMAGE_NAME = 'sergeyglad/wiki'
+
 def label = "jenkins-worker-${UUID.randomUUID().toString()}"
+
 
 podTemplate(label: label, yaml: """
 apiVersion: v1
