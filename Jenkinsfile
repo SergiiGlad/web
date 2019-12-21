@@ -84,7 +84,8 @@ spec:
           
           // if not PR  -  pull request  
           if ( isPullRequest() ) {
-                exitAsSuccess() 
+                //exitAsSuccess() 
+                Utils.markStageSkippedForConditional('Deploy via kubectl')
             }   
           
             withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
@@ -92,7 +93,8 @@ spec:
             }
 
             if ( isPushtoFeatureBranch() ) {
-                exitAsSuccess() 
+                //exitAsSuccess() 
+                Utils.markStageSkippedForConditional('Deploy via kubectl')
             }
         }    
 
@@ -209,6 +211,5 @@ def deploy( tagName, appName ) {
 
 def exitAsSuccess() {
     
-      throw e
-    
+         
 }
