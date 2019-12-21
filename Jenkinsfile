@@ -82,7 +82,7 @@ spec:
     }   
 
 
-    sh 'hostname'
+    sh 'ps aux'
     
 
     stage ('Docker push') {
