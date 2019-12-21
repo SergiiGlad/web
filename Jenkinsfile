@@ -100,54 +100,70 @@ spec:
     }
 
     
-    container('kubectl') {
-
+    stage('Deploy') {
+   
             def tagDockerImage
             def nameStage
-                  
-            if ( isChangeSet() ) {
-            
-                echo "Production release controlled by a change to production-release.txt file in application repository root," 
-                echo "containing a git tag that should be released to production environment"
 
-                tagDockerImage = "${sh(script:'cat production-release.txt',returnStdout: true)}"
-                //? need check is tag exist
+                             
+            if ( isChangeSet() && isMaster() ) {
+                
+                stage('Deploy to Production')
+                    echo "Production release controlled by a change to production-release.txt file in application repository root," 
+                    echo "containing a git tag that should be released to production environment"
 
-                nameStage = "wiki-prod"
+                    tagDockerImage = "${sh(script:'cat production-release.txt',returnStdout: true)}"
+                    //? need check is tag exist
+
+                    nameStage = "wiki-prod"
+             
+                    container('kubectl') {
+                        deploy( tagDockerImage, nameStage )
+                    }    
 
                           
-            }  else if ( isMaster() ) {
+            }  
+            
+            if ( isMaster() ) {
+               stage('Deploy to development version') {
+                    echo "Every commit to master branch is a dev release" 
+                    echo "Its push to master"
+                        
+                    tagDockerImage = env.BRANCH_NAME
+                    nameStage = "wiki-dev"
               
-               echo "Every commit to master branch is a dev release" 
-               echo "Its push to master"
+                    container('kubectl') {
+                        deploy( tagDockerImage, nameStage )
+                     }   
+               }        
                
-               tagDockerImage = env.BRANCH_NAME
-               nameStage = "wiki-dev"
+            } 
+            
+            if ( isBuildingTag() ){
+                stage('Deploy to QA stage') {
+                    echo "Every git tag on a master branch is a QA release" 
+                
+                    tagDockerImage = env.BRANCH_NAME
+                    nameStage = "wiki-qa"
                
-            } else if ( isBuildingTag() ){
-                
-                echo "Every git tag on a master branch is a QA release" 
-                
-                tagDockerImage = env.BRANCH_NAME
-                nameStage = "wiki-qa"
-                
+                    container('kubectl') {
+                        deploy( tagDockerImage, nameStage )
+                    }
+
                 // integrationTest 
                 // stage('approve'){ input "OK to go?" }
-                   
+                }
             }    
 
-            echo "Release image: ${DOCKER_IMAGE_NAME}:${tagDockerImage}"
-            echo "Deploy app name: ${nameStage}"
             
-            // Deploy to Kubernetes cluster
-            deploy( tagDockerImage, nameStage )
+            
+              
 
         }
      
-
+    }
   }// node
 } //podTemplate
-
 
 // is Push to master branch
 def isMaster() {
@@ -188,6 +204,9 @@ def isChangeSet() {
 }
 
 def deploy( tagName, appName ) {
+
+        echo "Release image: ${DOCKER_IMAGE_NAME}:$tagName"
+        echo "Deploy app name: $appName"
   
         withKubeConfig([credentialsId: 'kubeconfig']) {
         sh"""
