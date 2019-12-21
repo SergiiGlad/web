@@ -91,7 +91,7 @@ spec:
                 sh 'docker push ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
             }
 
-            if isPushtoFeatureBranch() {
+            if ( isPushtoFeatureBranch() ) {
                 exit 0
             }
         }    
