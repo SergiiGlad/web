@@ -78,15 +78,26 @@ spec:
 
     stage ('Docker push') {
 
-        // if not PR -  pull request  
-        if ( ! isPullRequest() ) {
-            container('docker-dind') {
-                sh 'docker image ls' 
-                withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-                    sh 'docker push ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
-                }
-            }    
+        container('docker-dind') {
+
+          sh 'docker image ls'    
+          // if not PR -  pull request  
+           
+          if ( isPullRequest() ) {
+                exit 0
+            }   
+          
+            withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
+                sh 'docker push ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
+            }
+
+            if 
         }    
+
+          
+
+        
+        
     }
 
     
@@ -153,6 +164,10 @@ def isBuildingTag() {
 
     // add check that  is branch master?
     return ( env.BRANCH_NAME ==~ /^v\d.\d.\d$/ )    
+}
+
+def isPushtoFeatureBranch() {
+    return ( ! isMaster() && ! isBuildingTag() && ! isPullRequest() )
 }
 
 def isChangeSet() {
