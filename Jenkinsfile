@@ -1,10 +1,13 @@
 #!/usr/bin/env groovy
 
 /**
- * This pipeline describes a multi container job, running Docker and Golang builds
+ * This pipeline describes a CI/CD process for running Golang app to multi stages environment
  */
 
-def label = "jenkins-worker"
+env.DOCKER_IMAGE_NAME = 'sergeyglad/wiki'
+
+def label = "jenkins-worker-${UUID.randomUUID().toString()}"
+
 
 podTemplate(label: label, yaml: """
 apiVersion: v1
@@ -37,92 +40,109 @@ spec:
   ) {
 
   node(label) {
-    
+
     stage('Checkout SCM') {
         checkout scm
-    } 
-
-    stage('Build and unit test Golang app') {
-        container('golang') {
-        
-        echo "Build Golang app"
-        sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o main .'
-        }
     }
 
-    stage('Build and push image') {
+    stage('Build  Golang app') {
+        container('golang') {
+            echo "Build Golang app"
+            sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o main .'
+        }    
+    }
+
+    stage ('Unit test Golang app')  {
+        container('golang') { 
+            echo "Unit test Golang app"
+        }
+    }    
+
+    stage('Docker build') {
       
       container('docker-dind') {
         
+        //
         // Environment variables DOCKER_IMAGE_NAME  set by Jenkins plugins 
-        echo "Docker build image name ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
+        // 
+        // BRANCH_NAME = master  - master branch
+        // BRANCH_NAME = PR-1    - pull request
+        // BRANCH_NAME = develop - other branch
+        // BRANCH_NAME = v0.0.1  - git tag
+        //
 
+        echo "Docker build image name ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
         sh 'docker build . -t ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
-        
-        withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-            sh 'docker push ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
         }
-     
-      }
     }
 
+    stage ('Docker push') {
 
-    stage('Deploy') {
-          
-                echo "Deploying...."
-                container('helm') {
-                 withKubeConfig([credentialsId: 'kubeconfig']) {
-                    sh 'helm version'
-                 } 
-              
-            }
-        }
+        // if not PR
+        if ( ! isPullRequest() ) {
+            container('docker-dind') {
+                sh 'docker image ls' 
+                withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
+                    sh 'docker push ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
+                }
+            }    
+        }    
+    }
+
     
-    stage('Deploy') {
-            container('kubectl') {
- 
-            if ( isPullRequest() ) {
-                // isPRMergeBuild
-               echo "It is pull request"
-               echo "Every PR should have build, test, docker image build, docker image push steps with docker tag = pr-number"
-               echo "docker image ${DOCKER_IMAGE_NAME}:${BRANCH_NAME} has push"
-            } else if ( isMaster() ) {
-               // is Push to master
-               echo "Its push to master"
-               echo "Every commit to master branch is a dev release"
+    stage('Deploy via kubectl') {
+        container('kubectl') {
 
-               // deploy dev release  
-               devRelease()
+            def tagDockerImage
+            def nameStage
+                  
+            if ( isChangeSet() ) {
+            
+                echo "Production release controlled by a change to production-release.txt file in application repository root," 
+                echo "containing a git tag that should be released to production environment"
+
+                tagDockerImage = "${sh(script:'cat production-release.txt',returnStdout: true)}"
+                //? need check is tag exist
+
+                nameStage = "wiki-prod"
+
+                          
+            }  else if ( isMaster() ) {
+              
+               echo "Every commit to master branch is a dev release" 
+               echo "Its push to master"
+               
+               tagDockerImage = env.BRANCH_NAME
+               nameStage = "wiki-dev"
+               
             } else if ( isBuildingTag() ){
+                
                 echo "Every git tag on a master branch is a QA release" 
                 
-                // deploy to test env
+                tagDockerImage = env.BRANCH_NAME
+                nameStage = "wiki-qa"
+                
+                // integrationTest 
+                // stage('approve'){ input "OK to go?" }
+                   
+            }    
 
-                // deployToQA()
-                // integrationTest()
-
-             
-            } else {
-                // Other operation   
-                sh 'echo push to other branch $(BRANCH_NAME)'
-            }
+            echo "Release image: ${DOCKER_IMAGE_NAME}:${tagDockerImage}"
+            echo "Deploy app name: ${nameStage}"
+            
+            // Deploy to Kubernetes cluster
+            deploy( tagDockerImage, nameStage )
 
         }
-    
-   } 
+    } 
 
-   stage('test') {
-         
-        echo "TEST"
-
-     
-      
-    }
-}// node
+  }// node
 } //podTemplate
 
+
+// is Push to master branch
 def isMaster() {
-    return (env.BRANCH_NAME ==~  /^master$/)
+    return (env.BRANCH_NAME == "master" )
 }
 
 def isPullRequest() {
@@ -130,14 +150,42 @@ def isPullRequest() {
 }
 
 def isBuildingTag() {
+
+    // add check that  is branch master?
     return ( env.BRANCH_NAME ==~ /^v\d.\d.\d$/ )    
 }
 
-def devRelease() {
-    stage ('Dev release') {
-    withKubeConfig([credentialsId: 'kubeconfig']) {
-                    sh 'kubectl rollout restart deploy/wiki-dev -n jenkins'
-                }   
-    }            
+def isChangeSet() {
+    
+    def changeLogSets = currentBuild.changeSets
+           for (int i = 0; i < changeLogSets.size(); i++) {
+           def entries = changeLogSets[i].items
+           for (int j = 0; j < entries.length; j++) {
+               def files = new ArrayList(entries[j].affectedFiles)
+               for (int k = 0; k < files.size(); k++) {
+                   def file = files[k]
+                   if (file.path.equals("production-release.txt")) {
+                       return true
+                   }
+               }
+            }
+    }
+
+    return false
 }
 
+def deploy( tagName, appName ) {
+  
+        withKubeConfig([credentialsId: 'kubeconfig']) {
+        sh"""
+           
+            kubectl delete deploy ${appName} --wait -n jenkins
+            kubectl delete svc ${appName} --wait -n jenkins
+            kubectl run ${appName} -n jenkins --image=${DOCKER_IMAGE_NAME}:${tagName} --port=3000 --labels="app=${appName}" --image-pull-policy=Always
+            kubectl expose -n jenkins deploy/${appName} --port=3000 --target-port=3000 --type=NodePort 
+            kubectl get svc -n jenkins
+
+        """ 
+        }  
+  
+}

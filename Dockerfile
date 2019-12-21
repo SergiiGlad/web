@@ -9,7 +9,7 @@ COPY --chown=65534:0 ./main ./main
 USER 65534
 
 # Expose port 3000 to the outside world
-EXPOSE 3030
+EXPOSE 3000
 
 # Command to run the executable
 ENTRYPOINT ["./main"]

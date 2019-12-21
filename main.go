@@ -20,7 +20,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
     if len(r.URL.Path[1:]) != 0 {
       name = r.URL.Path[1:]
       }
-    fmt.Fprintf(w, "Hi there Dev team1, %s!", name )
+    fmt.Fprintf(w, "Hi there Dev review 20/12, %s!", name )
 }
 
 func main() {
