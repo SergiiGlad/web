@@ -81,8 +81,8 @@ spec:
         container('docker-dind') {
 
           sh 'docker image ls'    
+          
           // if not PR  -  pull request  
-           
           if ( isPullRequest() ) {
                 exit 0
             }   
