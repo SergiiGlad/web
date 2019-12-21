@@ -1,4 +1,5 @@
 pipeline {
+    
     agent{
       kubernetes {
        yamlFile 'podTemplWorker.yaml'
