@@ -99,14 +99,11 @@ spec:
             return 0
     }
 
-    
-    stage('Deploy') {
-   
-            def tagDockerImage
-            def nameStage
+    def tagDockerImage
+    def nameStage
 
                              
-            if ( isChangeSet() && isMaster() ) {
+    if ( isChangeSet() && isMaster() ) {
                 
                 stage('Deploy to Production')
                     echo "Production release controlled by a change to production-release.txt file in application repository root," 
@@ -125,7 +122,7 @@ spec:
             }  
             
             if ( isMaster() ) {
-               stage('Deploy to development version') {
+               stage('Deploy development version') {
                     echo "Every commit to master branch is a dev release" 
                     echo "Its push to master"
                         
@@ -159,7 +156,7 @@ spec:
             
               
 
-        }
+     
      
     
   }// node
