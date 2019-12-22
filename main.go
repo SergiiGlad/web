@@ -16,7 +16,6 @@ import (
 
 )
 
-var version string
 
 func handler(w http.ResponseWriter, r *http.Request) {
     name := "Golang"
@@ -24,12 +23,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
       name = r.URL.Path[1:]
       }
     fmt.Fprintf(w, "Hi there Dev review 20/12, %s!\n", name )
-    fmt.Fprintf(w, "Version: %s!\n", version )
+    fmt.Fprintf(w, "Version: %s!\n", os.Getenv("INPUT_VERSION") )
 }
 
 func main() {
-
-  version = os.Getenv("INPUT_VERSION")
 
   http.HandleFunc("/", handler)
 
