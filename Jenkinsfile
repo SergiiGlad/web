@@ -107,7 +107,7 @@ spec:
                     deployHelm( \
                         "wiki-dev", \                       // name chart release
                         "develop",  \                       // namespace
-                        tagDockerImage = env.BRANCH_NAME, \ // image tag = master
+                        env.BRANCH_NAME, \                  // image tag = master
                         "develop", \                        // version name
                         "184-172-214-143.nip.io" \          //host
                         )
