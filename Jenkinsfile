@@ -98,19 +98,19 @@ spec:
     def tagDockerImage
     def nameStage
 
-
-
             if ( isMaster() ) {
                stage('Deploy development version') {
                     echo "Every commit to master branch is a dev release"
                     echo "Its push to master"
 
-                    tagDockerImage = env.BRANCH_NAME
-                    nameStage = "wiki-dev"
-
-                    container('kubectl') {
-                        deploy( tagDockerImage, nameStage )
-                     }
+                             
+                    deployHelm( \
+                        "wiki-dev", \                       // name chart release
+                        "develop",  \                       // namespace
+                        tagDockerImage = env.BRANCH_NAME, \ // image tag = master
+                        "develop", \                        // version name
+                        "184-172-214-143.nip.io" \          //host
+                        )
                }
 
 
@@ -128,9 +128,7 @@ spec:
                         container('kubectl') {
                             deploy( tagDockerImage, nameStage )
                         }
-
-
-            }
+                }
 
             }
 
@@ -216,12 +214,22 @@ def deploy( tagName, appName ) {
 }
 
 def deployHelm(name, ns, tag, ver, host) {
+
+     container('kubectl') {
+        withKubeConfig([credentialsId: 'kubeconfig']) {
+        sh """    
+            helm upgrade --install $name --dry-run --debug  ./wiki \
+            --namespace $ns \
+            --set image.tag=$tag \
+            --set appVer=$ver \
+            --set ingress.hostName=$name.$host \
+            --set-string ingress.tls[0].hosts[0]=$name.$host \
+            --set-string ingress.tls[0].secretName=acme-$name-tls 
+
+            helm ls
+        """
     
-    helm upgrade --install $name --dry-run --debug  ./wiki \
-    --namespace $ns \
-    --set image.tag=$tag \
-    --set appVer=$ver \
-    --set ingress.hostName=$name.$host \
-    --set-string ingress.tls[0].hosts[0]=$name.$host \
-    --set-string ingress.tls[0].secretName=acme-$name-tls \
+        }
+    }    
+
 }
