@@ -48,7 +48,7 @@ spec:
     stage('Build  Golang app') {
         container('golang') {
             echo "Build Golang app"
-            sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-w -s" -v -o main .'
+            sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-w -s" -o main .'
         }
     }
 
@@ -79,10 +79,6 @@ spec:
         // exitAsSuccess()
         return 0
     }
-
-
-    sh 'ps aux'
-
 
     stage ('Docker push') {
         container('docker-dind') {
@@ -208,7 +204,9 @@ def deploy( tagName, appName ) {
 
             kubectl delete deploy ${appName} --wait -n jenkins
             kubectl delete svc ${appName} --wait -n jenkins
-            kubectl run ${appName} -n jenkins --image=${DOCKER_IMAGE_NAME}:${tagName} --port=3000 --labels="app=${appName}" --image-pull-policy=Always
+            kubectl run ${appName} -n jenkins --image=${DOCKER_IMAGE_NAME}:${tagName} \
+                --port=3000 --labels="app=$appName" --image-pull-policy=Always \
+                --env="INPUT_VERSION=$appName"
             kubectl expose -n jenkins deploy/${appName} --port=3000 --target-port=3000 --type=NodePort
             kubectl get svc -n jenkins
 
