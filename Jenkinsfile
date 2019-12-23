@@ -108,8 +108,7 @@ spec:
                                 "develop",                         // namespace
                                 env.BRANCH_NAME,                   // image tag = master
                                 "develop",                         // version 
-                                "devю
-                            .184-172-214-143.nip.io")      //host
+                                "dev.184-172-214-143.nip.io")      //host
                     }
 
 
