@@ -48,7 +48,7 @@ spec:
     stage('Build  Golang app') {
         container('golang') {
             echo "Build Golang app"
-            sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o main .'
+            sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-w -s" -v -o main .'
         }
     }
 
@@ -103,23 +103,6 @@ spec:
     def nameStage
 
 
-    if ( isChangeSet() && isMaster() ) {
-
-                stage('Deploy to Production')
-                    echo "Production release controlled by a change to production-release.txt file in application repository root,"
-                    echo "containing a git tag that should be released to production environment"
-
-                    tagDockerImage = "${sh(script:'cat production-release.txt',returnStdout: true)}"
-                    //? need check is tag exist
-
-                    nameStage = "wiki-prod"
-
-                    container('kubectl') {
-                        deploy( tagDockerImage, nameStage )
-                    }
-
-
-            }
 
             if ( isMaster() ) {
                stage('Deploy development version') {
@@ -133,6 +116,25 @@ spec:
                         deploy( tagDockerImage, nameStage )
                      }
                }
+
+
+               if ( isChangeSet()  ) {
+
+                    stage('Deploy to Production')
+                        echo "Production release controlled by a change to production-release.txt file in application repository root,"
+                        echo "containing a git tag that should be released to production environment"
+
+                        tagDockerImage = "${sh(script:'cat production-release.txt',returnStdout: true)}"
+                        //? need check is tag exist
+
+                        nameStage = "wiki-prod"
+
+                        container('kubectl') {
+                            deploy( tagDockerImage, nameStage )
+                        }
+
+
+            }
 
             }
 
@@ -150,13 +152,9 @@ spec:
                 // integrationTest
                 // stage('approve'){ input "OK to go?" }
                 }
+
+                
             }
-
-
-
-
-
-
 
 
   }// node
