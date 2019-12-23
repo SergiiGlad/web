@@ -148,7 +148,7 @@ spec:
                 
             }
 
-            
+
 
 
   }// node
@@ -216,7 +216,7 @@ def deploy( tagName, appName ) {
 def deployHelm(name, ns, tag, ver, host) {
 
      container('kubectl') {
-        withKubeConfig([credentialsId: 'kubeconfig']) {
+        withKubeConfig([credentialsId: 'helm']) {
         sh """    
             helm upgrade --install $name --dry-run --debug  ./wiki \
             --namespace $ns \
