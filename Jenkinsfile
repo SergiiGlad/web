@@ -104,14 +104,12 @@ spec:
                     echo "Its push to master"
 
                              
-                    deployHelm( \
-                        "wiki-dev", \                       // name chart release
-                        "develop",  \                       // namespace
-                        env.BRANCH_NAME, \                  // image tag = master
-                        "develop", \                        // version name
-                        "184-172-214-143.nip.io" \          //host
-                        )
-               }
+                    deployHelm( "wiki-dev",                        // name chart release
+                                "develop",                         // namespace
+                                env.BRANCH_NAME,                   // image tag = master
+                                "develop",                         // version name
+                                "wiki-dev.184-172-214-143.nip.io")         //host
+                    }
 
 
                if ( isChangeSet()  ) {
@@ -149,6 +147,8 @@ spec:
 
                 
             }
+
+            
 
 
   }// node

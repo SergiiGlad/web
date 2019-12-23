@@ -10,7 +10,7 @@ helm upgrade --install $name --dry-run --debug  ./wiki \
     --namespace $ns \
     --set image.tag=$tag \
     --set appVer=$ver \
-    --set ingress.hostName=$name.$host \
-    --set-string ingress.tls[0].hosts[0]=$name.$host \
+    --set ingress.hostName=$host \
+    --set-string ingress.tls[0].hosts[0]=$host \
     --set-string ingress.tls[0].secretName=acme-$name-tls \
    
