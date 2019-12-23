@@ -108,7 +108,7 @@ spec:
                                 "develop",                         // namespace
                                 env.BRANCH_NAME,                   // image tag = master
                                 "develop",                         // version 
-                                "dev.184-172-214-143.nip.io")          //host
+                                "dev.184-172-214-143.nip.io")      //host
                     }
 
 
@@ -220,8 +220,8 @@ def deployHelm(name, ns, tag, ver, host) {
             --namespace $ns \
             --set image.tag=$tag \
             --set appVer=$ver \
-            --set ingress.hostName=$name.$host \
-            --set-string ingress.tls[0].hosts[0]=$name.$host \
+            --set ingress.hostName=$host \
+            --set-string ingress.tls[0].hosts[0]=$host \
             --set-string ingress.tls[0].secretName=acme-$name-tls 
 
             helm ls
