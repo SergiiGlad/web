@@ -36,7 +36,7 @@ Common labels
 */}}
 {{- define "wiki.labels" -}}
 app.kubernetes.io/name: {{ include "wiki.name" . }}
-helm.sh/chart: {{ include "wiki.chart" . }}
+helm.sh/chart:  "{{ .Chart.Name }}-{{ .Chart.Version }}"
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
@@ -44,13 +44,4 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "wiki.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create -}}
-    {{ default (include "wiki.fullname" .) .Values.serviceAccount.name }}
-{{- else -}}
-    {{ default "default" .Values.serviceAccount.name }}
-{{- end -}}
-{{- end -}}
+

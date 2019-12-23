@@ -214,3 +214,14 @@ def deploy( tagName, appName ) {
         }
 
 }
+
+def deployHelm(name, ns, tag, ver, host) {
+    
+    helm upgrade --install $name --dry-run --debug  ./wiki \
+    --namespace $ns \
+    --set image.tag=$tag \
+    --set appVer=$ver \
+    --set ingress.hostName=$name.$host \
+    --set-string ingress.tls[0].hosts[0]=$name.$host \
+    --set-string ingress.tls[0].secretName=acme-$name-tls \
+}

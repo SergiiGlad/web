@@ -4,11 +4,12 @@ metadata:
   name: {{ include "wiki.fullname" . }}
   labels:
 {{ include "wiki.labels" . | indent 4 }}
+  namespace: {{ .Values.namespace }} 
 spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: http
+      targetPort: {{ .Values.service.targetPort }}
       protocol: TCP
       name: http
   selector:
