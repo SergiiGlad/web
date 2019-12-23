@@ -107,8 +107,8 @@ spec:
                     deployHelm( "wiki-dev",                        // name chart release
                                 "develop",                         // namespace
                                 env.BRANCH_NAME,                   // image tag = master
-                                "develop",                         // version name
-                                "wiki-dev.184-172-214-143.nip.io")         //host
+                                "develop",                         // version 
+                                "dev.184-172-214-143.nip.io")          //host
                     }
 
 
@@ -147,8 +147,6 @@ spec:
 
                 
             }
-
-
 
 
   }// node
@@ -215,8 +213,8 @@ def deploy( tagName, appName ) {
 
 def deployHelm(name, ns, tag, ver, host) {
 
-     container('kubectl') {
-        withKubeConfig([credentialsId: 'helm']) {
+     container('helm') {
+        withKubeConfig([credentialsId: 'kubeconfig']) {
         sh """    
             helm upgrade --install $name --dry-run --debug  ./wiki \
             --namespace $ns \
