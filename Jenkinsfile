@@ -108,7 +108,8 @@ spec:
                                 "develop",                         // namespace
                                 env.BRANCH_NAME,                   // image tag = master
                                 "develop",                         // version 
-                                "dev.184-172-214-143.nip.io")      //host
+                                "devю
+                            .184-172-214-143.nip.io")      //host
                     }
 
 
@@ -218,6 +219,7 @@ def deployHelm(name, ns, tag, ver, host) {
         sh """    
             helm upgrade --install $name --debug  ./wiki \
             --namespace $ns \
+            --set namespace=$ns \
             --set image.tag=$tag \
             --set appVer=$ver \
             --set ingress.hostName=$host \

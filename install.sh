@@ -7,6 +7,7 @@ ver="v0.0.0"
 host="184-172-214-143.nip.io"
 
 helm upgrade --install $name --dry-run --debug  ./wiki \
+    --namespace $ns \
     --set namespace=$ns \
     --set image.tag=$tag \
     --set appVer=$ver \
