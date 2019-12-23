@@ -23,7 +23,7 @@ ingress:
   #- http:
   #    paths:
   #    - backend:   
-  path: \   
+           path: \   
 
 
 
