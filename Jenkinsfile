@@ -217,6 +217,8 @@ def deployHelm(name, ns, tag, ver, host) {
         withKubeConfig([credentialsId: 'kubeconfig']) {
         sh """    
             helm upgrade --install $name --debug  ./wiki \
+            --force \
+            --wait \
             --namespace $ns \
             --set namespace=$ns \
             --set image.tag=$tag \
