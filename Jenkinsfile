@@ -7,6 +7,7 @@
 env.DOCKER_IMAGE_NAME = 'sergeyglad/wiki'
 
 def label = "jenkins-worker-${UUID.randomUUID().toString()}"
+def host = "184-172-214-143.nip.io"
 
 
 podTemplate(label: label, yaml: """
@@ -106,9 +107,8 @@ spec:
                              
                     deployHelm( "wiki-dev",                        // name chart release
                                 "develop",                         // namespace
-                                env.BRANCH_NAME,                   // image tag = master
-                                "develop",                         // version 
-                                "dev.184-172-214-143.nip.io")      //host
+                                env.BRANCH_NAME                   // image tag = master
+                              
                     }
 
 
@@ -120,12 +120,13 @@ spec:
 
                         tagDockerImage = "${sh(script:'cat production-release.txt',returnStdout: true)}"
                         //? need check is tag exist
-
-                        nameStage = "wiki-prod"
-
-                        container('kubectl') {
-                            deploy( tagDockerImage, nameStage )
-                        }
+                    
+                    deployHelm( "wiki-prod",                      // name chart release
+                                "prod",                           // namespace
+                                tagDockerImage                   // image tag from file production-release.txt
+                               
+                    }
+                        
                 }
 
             }
@@ -211,20 +212,20 @@ def deploy( tagName, appName ) {
 
 }
 
-def deployHelm(name, ns, tag, ver, host) {
+def deployHelm(name, ns, tag) {
 
      container('helm') {
         withKubeConfig([credentialsId: 'kubeconfig']) {
         sh """    
+            echo appVersion: "$tag" >> ./wiki/Chart.yaml
             helm upgrade --install $name --debug  ./wiki \
             --force \
             --wait \
             --namespace $ns \
-            --set namespace=$ns \
             --set image.tag=$tag \
-            --set appVer=$ver \
-            --set ingress.hostName=$host \
-            --set-string ingress.tls[0].hosts[0]=$host \
+            --set appVer=$tag \
+            --set ingress.hostName=$name.$host \
+            --set-string ingress.tls[0].hosts[0]=$name.$host \
             --set-string ingress.tls[0].secretName=acme-$name-tls 
 
             helm ls

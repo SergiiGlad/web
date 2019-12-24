@@ -4,7 +4,6 @@ metadata:
   name: {{ include "wiki.fullname" . }}
   labels:
 {{ include "wiki.labels" . | indent 4 }}
-  namespace: {{ .Values.namespace }} 
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
