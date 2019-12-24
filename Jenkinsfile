@@ -7,7 +7,7 @@
 env.DOCKER_IMAGE_NAME = 'sergeyglad/wiki'
 
 def label = "jenkins-worker-${UUID.randomUUID().toString()}"
-def host = "184-172-214-143.nip.io"
+env.host = "184-172-214-143.nip.io"
 
 
 podTemplate(label: label, yaml: """
