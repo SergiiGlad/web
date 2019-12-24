@@ -109,11 +109,11 @@ spec:
                                 "develop",                         // namespace
                                 env.BRANCH_NAME)                   // image tag = master
                     
-
+               }
 
                if ( isChangeSet()  ) {
 
-                    stage('Deploy to Production')
+                    stage('Deploy to Production') {
                         echo "Production release controlled by a change to production-release.txt file in application repository root,"
                         echo "containing a git tag that should be released to production environment"
 
@@ -124,10 +124,10 @@ spec:
                                 "prod",                           // namespace
                                 tagDockerImage )                  // image tag from file production-release.txt
                     
-                    }    
-                }
+                    } //stage   
+               }  //if  
 
-            }
+            } //if
 
             if ( isBuildingTag() ){
                 stage('Deploy to QA stage') {
