@@ -133,12 +133,11 @@ spec:
                 stage('Deploy to QA stage') {
                     echo "Every git tag on a master branch is a QA release"
 
-                    tagDockerImage = env.BRANCH_NAME
-                    nameStage = "wiki-qa"
-
-                    container('kubectl') {
-                        deploy( tagDockerImage, nameStage )
-                    }
+                    deployHelm( "wiki-qa",                      // name chart release
+                                "qa",                           // namespace
+                                env.BRANCH_NAME )               // image tag = 0.0.1 
+                    
+                    }    
 
                 // integrationTest
                 // stage('approve'){ input "OK to go?" }
