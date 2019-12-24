@@ -107,8 +107,7 @@ spec:
                              
                     deployHelm( "wiki-dev",                        // name chart release
                                 "develop",                         // namespace
-                                env.BRANCH_NAME                   // image tag = master
-                              
+                                env.BRANCH_NAME)                   // image tag = master
                     }
 
 
@@ -123,8 +122,7 @@ spec:
                     
                     deployHelm( "wiki-prod",                      // name chart release
                                 "prod",                           // namespace
-                                tagDockerImage                   // image tag from file production-release.txt
-                               
+                                tagDockerImage )                  // image tag from file production-release.txt
                     }
                         
                 }
