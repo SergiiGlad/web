@@ -222,8 +222,8 @@ def deployHelm(name, ns, tag) {
             --namespace $ns \
             --set image.tag=$tag \
             --set appVer=$tag \
-            --set ingress.hostName=$name.host \
-            --set-string ingress.tls[0].hosts[0]=$name.host \
+            --set ingress.hostName=$name.${env.host} \
+            --set-string ingress.tls[0].hosts[0]=$name.${env.host} \
             --set-string ingress.tls[0].secretName=acme-$name-tls 
 
             helm ls
