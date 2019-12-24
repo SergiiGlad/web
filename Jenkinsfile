@@ -124,7 +124,7 @@ spec:
                                 "prod",                           // namespace
                                 tagDockerImage )                  // image tag from file production-release.txt
                     
-                        
+                    }    
                 }
 
             }
