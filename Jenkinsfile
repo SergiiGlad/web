@@ -1,4 +1,4 @@
-#!groovy
+#!/usr/bin/env groovy
 
 /**
  * This pipeline describes a CI/CD process for running Golang app to multi stages environment
@@ -68,7 +68,7 @@ spec:
         // BRANCH_NAME = master  - master branch
         // BRANCH_NAME = PR-1    - pull request
         // BRANCH_NAME = develop - other branch
-        // BRANCH_NAME = v0.0.1  - git tag
+        // BRANCH_NAME = 0.0.1  - git tag
         //
 
         echo "Docker build image name ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
@@ -143,6 +143,8 @@ spec:
                 // stage('approve'){ input "OK to go?" }
                 }
 
+
+
                 
             
 
@@ -162,7 +164,7 @@ def isPullRequest() {
 def isBuildingTag() {
 
     // add check that  is branch master?
-    return ( env.BRANCH_NAME ==~ /^v\d.\d.\d$/ )
+    return ( env.BRANCH_NAME ==~ /^\d.\d.\d$/ )
 }
 
 def isPushtoFeatureBranch() {
