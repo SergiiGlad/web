@@ -56,6 +56,7 @@ spec:
     stage ('Unit test Golang app')  {
         container('golang') {
             echo "Unit test Golang app"
+            go test -v
         }
     }
 
