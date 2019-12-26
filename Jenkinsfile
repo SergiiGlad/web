@@ -216,7 +216,7 @@ def deployHelm(name, ns, tag) {
      container('helm') {
         withKubeConfig([credentialsId: 'kubeconfig']) {
         sh """    
-            echo appVersion: "$tag+%Y%m%d-%H%M%S" >> ./wiki/Chart.yaml
+            echo appVersion: $tag >> ./wiki/Chart.yaml
             helm upgrade --install $name --debug  ./wiki \
             --force \
             --wait \
