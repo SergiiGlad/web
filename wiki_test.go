@@ -17,7 +17,7 @@ import (
 
 )
 
-func testHandler(t *testing.T) {
+func TestHandler(t *testing.T) {
 
   req := httptest.NewRequest("GET", "http://example.com/foo", nil)
 	w := httptest.NewRecorder()
