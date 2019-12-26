@@ -56,6 +56,7 @@ spec:
     stage ('Unit test Golang app')  {
         container('golang') {
             echo "Unit test Golang app"
+            sh "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go test -v ."
         }
     }
 

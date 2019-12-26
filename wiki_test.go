@@ -34,7 +34,7 @@ func TestHandler(t *testing.T) {
 	fmt.Println(resp.Header.Get("Content-Type"))
 	fmt.Println(string(body))
 
-  if resp.StatusCode != 200 {
+  if resp.StatusCode != 201 {
     t.Errorf("Server http not run, got: %d, want: %d.",resp.StatusCode, 200)
   }
 }
