@@ -97,8 +97,8 @@ spec:
             return 0
     }
 
-    def tagDockerImage
-    def nameStage
+    def tagDockerImage string
+    def nameStage string
 
             if ( isMaster() ) {
                stage('Deploy development version') {
@@ -123,7 +123,7 @@ spec:
                     
                     deployHelm( "wiki-prod",                      // name chart release
                                 "prod",                           // namespace
-                                tagDockerImage )             // image tag from file production-release.txt
+                                "${tagDockerImage}" )             // image tag from file production-release.txt
                     
                     } //stage   
                }  //if  
@@ -227,7 +227,7 @@ def deployHelm(name, ns, tag) {
             --set-string appVer="${tag}" \
             --set ingress.hostName="${name}.${env.host}" \
             --set ingress.tls[0].hosts[0]="${name}.${env.host}" \
-            --set ingress.tls[0].secretName="acme-${name}-tls" 
+            --set ingress.tls[0].secretName="acme-${name}-tls" \
 
             helm ls
         """
