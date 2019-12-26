@@ -97,8 +97,8 @@ spec:
             return 0
     }
 
-    def tagDockerImage string
-    def nameStage string
+    def tagDockerImage
+    def nameStage
 
             if ( isMaster() ) {
                stage('Deploy development version') {
