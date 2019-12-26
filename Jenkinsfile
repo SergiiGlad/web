@@ -218,7 +218,6 @@ def deployHelm(name, ns, tag) {
         sh """    
             echo appVersion: "$tag" >> ./wiki/Chart.yaml
             helm upgrade --install $name --debug  ./wiki \
-            --force \
             --wait \
             --namespace $ns \
             --set image.tag=$tag \
