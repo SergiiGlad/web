@@ -6,7 +6,7 @@ tag="master"
 ver="v0.0.0"
 host="dev.184-172-214-143.nip.io"
 
-helm upgrade --install $name  --debug  ./wiki \
+helm upgrade --install $name  --debug --dry-run ./wiki \
     --force \
     --wait \
     --namespace $ns \
