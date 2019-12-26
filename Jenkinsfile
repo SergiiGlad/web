@@ -123,7 +123,7 @@ spec:
                     
                     deployHelm( "wiki-prod",                      // name chart release
                                 "prod",                           // namespace
-                                tagDockerImage )                  // image tag from file production-release.txt
+                                tagDockerImage )             // image tag from file production-release.txt
                     
                     } //stage   
                }  //if  
@@ -223,7 +223,7 @@ def deployHelm(name, ns, tag) {
             --wait \
             --namespace $ns \
             --set image.tag=$tag \
-            --set appVer=$tag \
+            --set-string appVer=$tag \
             --set ingress.hostName="${name}.${env.host}" \
             --set ingress.tls[0].hosts[0]="${name}.${env.host}" \
             --set ingress.tls[0].secretName="acme-${name}-tls" 
