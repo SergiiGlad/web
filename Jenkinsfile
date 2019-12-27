@@ -5,11 +5,9 @@
  */
 
 def DOCKER_IMAGE_NAME = 'sergeyglad/wiki'
-
 def label = "jenkins-worker-${UUID.randomUUID().toString()}"
 env.host = "184-172-214-143.nip.io"
 
-def dockerRepo = 'sergeyglad/wiki'
 
 
 
@@ -59,7 +57,7 @@ spec:
     stage ('Unit test Golang app')  {
         container('golang') {
             echo "Unit test Golang app"
-            sh "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go test -v ."
+            sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go test -v .'
         }
     }
 
@@ -75,12 +73,9 @@ spec:
         // BRANCH_NAME = 0.0.1  - git tag
         //
 
-        def image = "${dockerRepo}:${BRANCH_NAME}"
-
-        sh 'echo image: ${image}'
 
         echo "Docker build image name ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
-        sh 'docker build . -t ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
+        sh "docker build . -t ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
         }
     }
 
@@ -94,7 +89,7 @@ spec:
 
           sh 'docker image ls'
           withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-                sh 'docker push ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
+                sh "docker push ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
           }
         }
     }
