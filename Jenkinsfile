@@ -23,9 +23,6 @@ spec:
     image: docker:stable-dind
     securityContext:
       privileged: true
-    env:
-      - name: DOCKER_TLS_CERTDIR
-        value: ""
   - name: helm
     image: lachlanevenson/k8s-helm:v2.16.1
     tty: true
@@ -65,11 +62,9 @@ spec:
     // BRANCH_NAME = develop - other branch
     // BRANCH_NAME = 0.0.1  - git tag
     //
-    dockerImage = 'sergeyglad/wiki:' + env.BRANCH_NAME
     
-    echo "dockerImage:" 
-    echo dockerImage
-
+    dockerImage = 'sergeyglad/wiki:' + env.BRANCH_NAME
+   
     stage('Docker build') {
       container('docker-dind') {
            sh """
@@ -102,21 +97,10 @@ spec:
             return 0
     }
 
-    if ( isMaster() ) {
-               stage('Deploy development version') {
-                    echo "Every commit to master branch is a dev release"
-                    echo "Its push to master"
+    if ( isMaster()  ) {
 
-                             
-                    deployHelm( "wiki-dev",                        // name chart release
-                                "develop",                         // namespace
-                                env.BRANCH_NAME)                   // image tag = master
-                    
-               }
-
-               if ( isChangeSet()  ) {
-
-                    stage('Deploy to Production') {
+        if ( onlyJenkinsfileChangeSet() ) {
+             stage('Deploy to Production') {
                         echo "Production release controlled by a change to production-release.txt file in application repository root,"
                         echo "containing a git tag that should be released to production environment"
 
@@ -128,24 +112,37 @@ spec:
                                 tagDockerImage )             // image tag from file production-release.txt
                     
                     } //stage   
-               }  //if  
 
-            } //if
+        } else {
+            stage('Deploy development version') {
+                echo "Every commit to master branch is a dev release"
+                echo "Its push to master"
+                                
+                deployHelm( "wiki-dev",                        // name chart release
+                            "develop",                         // namespace
+                            env.BRANCH_NAME)                   // image tag = master
+                        
+                }
+            }
+    
+                       
+       }  //if  
+    } //if
 
-            if ( isBuildingTag() ){
-                stage('Deploy to QA stage') {
-                    echo "Every git tag on a master branch is a QA release"
+    if ( isBuildingTag() ){
+        stage('Deploy to QA stage') {
+        echo "Every git tag on a master branch is a QA release"
 
-                    deployHelm( "wiki-qa",                      // name chart release
-                                "qa",                           // namespace
-                                env.BRANCH_NAME )               // image tag = 0.0.1 
+        deployHelm( "wiki-qa",                      // name chart release
+                    "qa",                           // namespace
+                    env.BRANCH_NAME )               // image tag = 0.0.1 
                     
                     }    
 
                
                 }
 
-                printIngress() // ingress info
+    printIngress() // ingress info
 
 
 
@@ -175,21 +172,34 @@ def isPushtoFeatureBranch() {
     return ( ! isMaster() && ! isBuildingTag() && ! isPullRequest() )
 }
 
+def onlyJenkinsfileChangeSet() {
+
+    def onlyOneFile = false
+        currentBuild.changeSets.any { changeSet -> 
+        if ( changeSet.items.length == 1 ) { onlyOneFile = true }
+        changeSet.items.each { entry ->
+            entry.affectedFiles.each { file -> 
+                if (file.path.equals("Jenkinsfile") && onlyOneFile) {
+                     return true   
+                }    
+            }
+         }
+        }   
+
+    return false    
+}
+
 def isChangeSet() {
 
-    def changeLogSets = currentBuild.changeSets
-           for (int i = 0; i < changeLogSets.size(); i++) {
-           def entries = changeLogSets[i].items
-           for (int j = 0; j < entries.length; j++) {
-               def files = new ArrayList(entries[j].affectedFiles)
-               for (int k = 0; k < files.size(); k++) {
-                   def file = files[k]
-                   if (file.path.equals("production-release.txt")) {
-                       return true
-                   }
-               }
-            }
-    }
+    currentBuild.changeSets.each { changeSet ->  
+        changeSet.items.each { entry ->
+             entry.affectedFiles.each { file -> 
+                  if (file.path.equals("production-release.txt")) {
+                    return true
+                  }
+             }        
+         }
+        }    
 
     return false
 }
@@ -210,11 +220,11 @@ def deployHelm(name, ns, tag) {
      container('helm') {
         withKubeConfig([credentialsId: 'kubeconfig']) {
         sh """    
-            echo appVersion: $tag >> ./wiki/Chart.yaml
+            echo appVersion: $tag >> ./wikiChart/Chart.yaml
 
             echo tag: ${tag}
 
-            helm upgrade --install $name --debug  ./wiki \
+            helm upgrade --install $name --debug  ./wikiChart \
             --force \
             --wait \
             --namespace $ns \
