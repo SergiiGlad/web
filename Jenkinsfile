@@ -69,7 +69,8 @@ spec:
     //
 
     def dockerImage = DOCKER_REPO_NAME + ':' + env.BRANCH_NAME
-    echo "dockerImage:" dockerImage
+    echo "dockerImage:" 
+    echo dockerImage
 
     stage('Docker build') {
       container('docker-dind') {
@@ -91,7 +92,7 @@ spec:
           sh 'docker image ls'
           withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
                 sh """
-                    docker push dockerImage
+                    docker push $dockerImage
                 """
           }
         }
