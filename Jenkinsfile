@@ -36,7 +36,7 @@ spec:
  """
   ) {
 
-  node(label) {
+node(label) {
 
     stage('Checkout SCM') {
         checkout scm
