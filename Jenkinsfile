@@ -21,7 +21,8 @@ spec:
     tty: true
   - name: docker-dind
     image: docker:stable-dind
-    
+    securityContext:
+      privileged: true
   - name: helm
     image: lachlanevenson/k8s-helm:v2.16.1
     tty: true
