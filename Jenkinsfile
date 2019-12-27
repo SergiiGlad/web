@@ -101,17 +101,17 @@ spec:
 
         if ( onlyJenkinsfileChangeSet() ) {
              stage('Deploy to Production') {
-                        echo "Production release controlled by a change to production-release.txt file in application repository root,"
-                        echo "containing a git tag that should be released to production environment"
+                echo "Production release controlled by a change to production-release.txt file in application repository root,"
+                echo "containing a git tag that should be released to production environment"
 
-                        tagDockerImage = '${sh(script:'cat production-release.txt',returnStdout: true)}'
-                        //? need check is tag exist
+                tagDockerImage = '${sh(script:'cat production-release.txt',returnStdout: true)}'
+                //? need check is tag exist
                     
-                    deployHelm( "wiki-prod",                      // name chart release
-                                "prod",                           // namespace
-                                tagDockerImage )             // image tag from file production-release.txt
+                deployHelm( "wiki-prod",                      // name chart release
+                            "prod",                           // namespace
+                            tagDockerImage )             // image tag from file production-release.txt
                     
-                    } //stage   
+                } //stage   
 
         } else {
             stage('Deploy development version') {
@@ -131,24 +131,18 @@ spec:
 
     if ( isBuildingTag() ){
         stage('Deploy to QA stage') {
-        echo "Every git tag on a master branch is a QA release"
+            echo "Every git tag on a master branch is a QA release"
 
-        deployHelm( "wiki-qa",                      // name chart release
-                    "qa",                           // namespace
-                    env.BRANCH_NAME )               // image tag = 0.0.1 
+            deployHelm( "wiki-qa",                      // name chart release
+                        "qa",                           // namespace
+                        env.BRANCH_NAME )               // image tag = 0.0.1 
                     
-                    }    
+        }    
 
                
-                }
+    }
 
     printIngress() // ingress info
-
-
-
-                
-            
-
 
   }// node
 } //podTemplate
