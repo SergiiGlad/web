@@ -23,9 +23,6 @@ spec:
     image: docker:stable-dind
     securityContext:
       privileged: true
-    env:
-      - name: DOCKER_TLS_CERTDIR
-        value: ""
   - name: helm
     image: lachlanevenson/k8s-helm:v2.16.1
     tty: true
@@ -65,11 +62,9 @@ spec:
     // BRANCH_NAME = develop - other branch
     // BRANCH_NAME = 0.0.1  - git tag
     //
-    dockerImage = 'sergeyglad/wiki:' + env.BRANCH_NAME
     
-    echo "dockerImage:" 
-    echo dockerImage
-
+    dockerImage = 'sergeyglad/wiki:' + env.BRANCH_NAME
+   
     stage('Docker build') {
       container('docker-dind') {
            sh """
@@ -175,21 +170,35 @@ def isPushtoFeatureBranch() {
     return ( ! isMaster() && ! isBuildingTag() && ! isPullRequest() )
 }
 
+def onlyJenkinsfileChangeSet() {
+
+    def onlyOneFile = false
+        currentBuild.changeSets.any { changeSet -> 
+        if ( changeSet.items.length == 1 ) { onlyOneFile = true }
+        changeSet.items.each { entry ->
+            
+            entry.affectedFiles.each { file -> 
+                if (file.path.equals("Jenkinsfile") && onlyOneFile) {
+                     return true   
+                }    
+            }
+         }
+        }   
+
+    return false    
+}
+
 def isChangeSet() {
 
-    def changeLogSets = currentBuild.changeSets
-           for (int i = 0; i < changeLogSets.size(); i++) {
-           def entries = changeLogSets[i].items
-           for (int j = 0; j < entries.length; j++) {
-               def files = new ArrayList(entries[j].affectedFiles)
-               for (int k = 0; k < files.size(); k++) {
-                   def file = files[k]
-                   if (file.path.equals("production-release.txt")) {
-                       return true
-                   }
-               }
-            }
-    }
+    currentBuild.changeSets.each { changeSet ->  
+        changeSet.items.each { entry ->
+             entry.affectedFiles.each { file -> 
+                  if (file.path.equals("production-release.txt")) {
+                    return true
+                  }
+             }        
+         }
+        }    
 
     return false
 }
