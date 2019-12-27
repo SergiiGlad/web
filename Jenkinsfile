@@ -9,6 +9,9 @@ env.DOCKER_IMAGE_NAME = 'sergeyglad/wiki'
 def label = "jenkins-worker-${UUID.randomUUID().toString()}"
 env.host = "184-172-214-143.nip.io"
 
+def dockerRepo = 'sergeyglad/wiki'
+def image
+
 
 podTemplate(label: label, yaml: """
 apiVersion: v1
@@ -71,6 +74,10 @@ spec:
         // BRANCH_NAME = develop - other branch
         // BRANCH_NAME = 0.0.1  - git tag
         //
+
+        image = dockerRepo + ':' + env.BRANCH_NAME
+
+        sh 'echo image: ${image}'
 
         echo "Docker build image name ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
         sh 'docker build . -t ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}'
@@ -144,6 +151,8 @@ spec:
                 // stage('approve'){ input "OK to go?" }
                 }
 
+                printIngress()
+
 
 
                 
@@ -191,23 +200,12 @@ def isChangeSet() {
     return false
 }
 
-def deploy( tagName, appName ) {
+def printIngress() {
 
-        echo "Release image: ${DOCKER_IMAGE_NAME}:$tagName"
-        echo "Deploy app name: $appName"
+    withKubeConfig([credentialsId: 'kubeconfig']) {
+    
+        sh 'kubectl get ing --all-namespaces'
 
-        withKubeConfig([credentialsId: 'kubeconfig']) {
-        sh"""
-
-            kubectl delete deploy ${appName} --wait -n jenkins
-            kubectl delete svc ${appName} --wait -n jenkins
-            kubectl run ${appName} -n jenkins --image=${DOCKER_IMAGE_NAME}:${tagName} \
-                --port=3000 --labels="app=$appName" --image-pull-policy=Always \
-                --env="INPUT_VERSION=$appName"
-            kubectl expose -n jenkins deploy/${appName} --port=3000 --target-port=3000 --type=NodePort
-            kubectl get svc -n jenkins
-
-        """
         }
 
 }
