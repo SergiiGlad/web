@@ -4,10 +4,9 @@
  * This pipeline describes a CI/CD process for running Golang app to multi stages environment
  */
 
-def DOCKER_REPO_NAME = 'sergeyglad/wiki'
+
 def label = "jenkins-worker-${UUID.randomUUID().toString()}"
 env.host = "184-172-214-143.nip.io"
-
 
 
 podTemplate(label: label, yaml: """
@@ -67,8 +66,8 @@ spec:
     // BRANCH_NAME = develop - other branch
     // BRANCH_NAME = 0.0.1  - git tag
     //
-
-    def dockerImage = DOCKER_REPO_NAME + ':' + env.BRANCH_NAME
+    dockerImage = 'sergeyglad/wiki:' + env.BRANCH_NAME
+    
     echo "dockerImage:" 
     echo dockerImage
 
@@ -104,10 +103,7 @@ spec:
             return 0
     }
 
-    def tagDockerImage
-    def nameStage
-
-            if ( isMaster() ) {
+    if ( isMaster() ) {
                stage('Deploy development version') {
                     echo "Every commit to master branch is a dev release"
                     echo "Its push to master"
