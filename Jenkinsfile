@@ -173,7 +173,7 @@ def onlyJenkinsfileChangeSet() {
         if ( changeSet.items.length == 1 ) { onlyOneFile = true }
         changeSet.items.each { entry ->
             entry.affectedFiles.each { file -> 
-                if (file.path.equals("Jenkinsfile") && onlyOneFile) {
+                if (file.path.equals("production-release.txt") && onlyOneFile) {
                      return true   
                 }    
             }
