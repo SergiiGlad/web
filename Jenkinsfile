@@ -216,12 +216,14 @@ def deployHelm(name, ns, tag) {
         withKubeConfig([credentialsId: 'kubeconfig']) {
         sh """    
             echo appVersion: $tag >> ./wiki/Chart.yaml
+
             echo tag: ${tag}
+
             helm upgrade --install $name --debug  ./wiki \
             --force \
             --wait \
             --namespace $ns \
-            --set image.tag=$tag \
+            --set image.name=$dockerImage \
             --set appVer=$tag \
             --set ingress.hostName="${name}.${env.host}" \
             --set ingress.tls[0].hosts[0]="${name}.${env.host}" \
