@@ -4,10 +4,9 @@
  * This pipeline describes a CI/CD process for running Golang app to multi stages environment
  */
 
-def DOCKER_IMAGE_NAME = 'sergeyglad/wiki'
+def DOCKER_REPO_NAME = 'sergeyglad/wiki'
 def label = "jenkins-worker-${UUID.randomUUID().toString()}"
 env.host = "184-172-214-143.nip.io"
-
 
 
 
@@ -61,26 +60,28 @@ spec:
         }
     }
 
+      
+    //
+    // BRANCH_NAME = master  - master branch
+    // BRANCH_NAME = PR-1    - pull request
+    // BRANCH_NAME = develop - other branch
+    // BRANCH_NAME = 0.0.1  - git tag
+    //
+
+    def dockerImage = DOCKER_REPO_NAME + ':' + env.BRANCH_NAME
+    echo "dockerImage:" dockerImage
+
     stage('Docker build') {
       container('docker-dind') {
-
-        //
-        // Environment variables DOCKER_IMAGE_NAME  set by Jenkins plugins
-        //
-        // BRANCH_NAME = master  - master branch
-        // BRANCH_NAME = PR-1    - pull request
-        // BRANCH_NAME = develop - other branch
-        // BRANCH_NAME = 0.0.1  - git tag
-        //
-
-
-        echo "Docker build image name ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
-        sh "docker build . -t ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
+           sh """
+                    docker build . -t $dockerImage
+           """
         }
     }
 
     if ( isPullRequest() ) {
         // exitAsSuccess()
+        currentBuild.result = 'SUCCESS';  
         return 0
     }
 
@@ -89,13 +90,16 @@ spec:
 
           sh 'docker image ls'
           withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-                sh "docker push ${DOCKER_IMAGE_NAME}:${BRANCH_NAME}"
+                sh """
+                    docker push dockerImage
+                """
           }
         }
     }
 
     if ( isPushtoFeatureBranch() ) {
             // exitAsSuccess()
+            currentBuild.result = 'SUCCESS';  
             return 0
     }
 
@@ -120,7 +124,7 @@ spec:
                         echo "Production release controlled by a change to production-release.txt file in application repository root,"
                         echo "containing a git tag that should be released to production environment"
 
-                        tagDockerImage = "${sh(script:'cat production-release.txt',returnStdout: true)}"
+                        tagDockerImage = '${sh(script:'cat production-release.txt',returnStdout: true)}'
                         //? need check is tag exist
                     
                     deployHelm( "wiki-prod",                      // name chart release
@@ -142,11 +146,10 @@ spec:
                     
                     }    
 
-                // integrationTest
-                // stage('approve'){ input "OK to go?" }
+               
                 }
 
-                printIngress()
+                printIngress() // ingress info
 
 
 
