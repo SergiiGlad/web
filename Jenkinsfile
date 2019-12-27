@@ -5,8 +5,8 @@
  */
 
 
-def label = "jenkins-worker-${UUID.randomUUID().toString()}"
-env.host = "184-172-214-143.nip.io"
+label = "jenkins-worker-${UUID.randomUUID().toString()}"
+host = "184-172-214-143.nip.io"
 
 
 podTemplate(label: label, yaml: """
@@ -58,7 +58,6 @@ spec:
             sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go test -v .'
         }
     }
-
       
     //
     // BRANCH_NAME = master  - master branch
@@ -221,8 +220,8 @@ def deployHelm(name, ns, tag) {
             --namespace $ns \
             --set image.name=$dockerImage \
             --set appVer=$tag \
-            --set ingress.hostName="${name}.${env.host}" \
-            --set ingress.tls[0].hosts[0]="${name}.${env.host}" \
+            --set ingress.hostName="${name}.${host}" \
+            --set ingress.tls[0].hosts[0]="${name}.${host}" \
             --set ingress.tls[0].secretName="acme-${name}-tls" \
 
             helm ls
