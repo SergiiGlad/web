@@ -4,13 +4,13 @@
  * This pipeline describes a CI/CD process for running Golang app to multi stages environment
  */
 
-env.DOCKER_IMAGE_NAME = 'sergeyglad/wiki'
+def DOCKER_IMAGE_NAME = 'sergeyglad/wiki'
 
 def label = "jenkins-worker-${UUID.randomUUID().toString()}"
 env.host = "184-172-214-143.nip.io"
 
 def dockerRepo = 'sergeyglad/wiki'
-def image
+
 
 
 podTemplate(label: label, yaml: """
@@ -75,7 +75,7 @@ spec:
         // BRANCH_NAME = 0.0.1  - git tag
         //
 
-        image = dockerRepo + ':' + env.BRANCH_NAME
+        def image = "${dockerRepo}:${BRANCH_NAME}"
 
         sh 'echo image: ${image}'
 
@@ -130,7 +130,7 @@ spec:
                     
                     deployHelm( "wiki-prod",                      // name chart release
                                 "prod",                           // namespace
-                                "${tagDockerImage}" )             // image tag from file production-release.txt
+                                tagDockerImage )             // image tag from file production-release.txt
                     
                     } //stage   
                }  //if  
@@ -201,12 +201,13 @@ def isChangeSet() {
 }
 
 def printIngress() {
-
+ container('kubectl') {
     withKubeConfig([credentialsId: 'kubeconfig']) {
     
         sh 'kubectl get ing --all-namespaces'
 
         }
+ }     
 
 }
 
