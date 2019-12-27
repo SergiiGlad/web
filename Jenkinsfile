@@ -167,7 +167,6 @@ def isPushtoFeatureBranch() {
 }
 
 def onlyJenkinsfileChangeSet() {
-
     def onlyOneFile = false
         currentBuild.changeSets.any { changeSet -> 
         if ( changeSet.items.length == 1 ) { onlyOneFile = true }
@@ -176,9 +175,9 @@ def onlyJenkinsfileChangeSet() {
                 if (file.path.equals("production-release.txt") && onlyOneFile) {
                      return true   
                 }    
-            }
-         }
-        }   
+        }
+    }
+}   
 
     return false    
 }
@@ -190,10 +189,10 @@ def isChangeSet() {
              entry.affectedFiles.each { file -> 
                   if (file.path.equals("production-release.txt")) {
                     return true
-                  }
-             }        
-         }
-        }    
+                }
+        }        
+    }
+}    
 
     return false
 }
@@ -205,8 +204,7 @@ def printIngress() {
         sh 'kubectl get ing --all-namespaces'
 
         }
- }     
-
+    }     
 }
 
 def deployHelm(name, ns, tag) {
