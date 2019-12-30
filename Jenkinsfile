@@ -206,7 +206,7 @@ def changeSetOnlyPrtoductionRelease() {
                    println file
                    if (file.path.equals("production-release.txt")  && onlyOneFile ) {
                         echo "Only production-release.txt changed"
-                        retrun true
+                        return true
                    }
                }
             }
