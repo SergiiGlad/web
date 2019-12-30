@@ -99,7 +99,7 @@ node(label) {
 
     if ( isMaster()  ) {
 
-        if ( onlyJenkinsfileChangeSet() ) {
+        if ( changeSetOnlyPrtoductionRelease() ) {
              stage('Deploy to Production') {
                 echo "Production release controlled by a change to production-release.txt file in application repository root,"
                 echo "containing a git tag that should be released to production environment"
@@ -188,20 +188,36 @@ def onlyJenkinsfileChangeSet() {
     return false   
 }
 
-def isChangeSet() {
-
-    currentBuild.changeSets.each { changeSet ->  
-        changeSet.items.each { entry ->
-             entry.affectedFiles.each { file -> 
-                  if (file.path.equals("production-release.txt")) {
-                    return true
-                }
-        }        
+def changeSetOnlyPrtoductionRelease() {
+    def changeSets = currentBuild.changeSets
+        def onlyOneFile = false    
+        for (int i = 0; i < changeLogSets.size(); i++) {
+           def entries = changeLogSets[i].items
+           for (int j = 0; j < entries.length; j++) {
+               if ( entries.length == 1 ) { onlyOneFile = true }
+               def files = new ArrayList(entries[j].affectedFiles)
+                println "affectedFiles"
+                println files[0].path
+                println files.path
+                             
+               for (int k = 0; k < files.size(); k++) {
+                   def file = files[k]
+                   println k
+                   println file
+                   if (file.path.equals("production-release.txt")  && onlyOneFile ) {
+                        echo "Only production-release.txt changed"
+                        retrun true
+                   }
+               }
+            }
     }
+
+    println "last section"
+    return false
 }    
 
-    return false
-}
+
+
 
 def printIngress() {
  container('kubectl') {
