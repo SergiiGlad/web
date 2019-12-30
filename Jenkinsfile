@@ -98,35 +98,16 @@ node(label) {
     }
 
     if ( isMaster()  ) {
-
-        if ( changeSetOnlyPrtoductionRelease() ) {
-             stage('Deploy to Production') {
-                echo "Production release controlled by a change to production-release.txt file in application repository root,"
-                echo "containing a git tag that should be released to production environment"
-
-                tagDockerImage = "${sh(script:'cat production-release.txt',returnStdout: true)}"
-                //? need check is tag exist
-                    
-                deployHelm( "wiki-prod",                 // name chart release
-                            "prod",                      // namespace
-                            tagDockerImage )             // image tag from file production-release.txt
-                    
-                } //stage   
-
-        } else {
-            stage('Deploy development version') {
-                echo "Every commit to master branch is a dev release"
-                echo "Its push to master"
-                                
-                deployHelm( "wiki-dev",                        // name chart release
-                            "develop",                         // namespace
-                            env.BRANCH_NAME)                   // image tag = master
+        stage('Deploy development version') {
+            echo "Every commit to master branch is a dev release"
+            echo "Its push to master"
+                               
+            deployHelm( "wiki-dev",                        // name chart release
+                        "develop",                         // namespace
+                        env.BRANCH_NAME)                   // image tag = master
                         
                 }
             }
-    
-                       
-       
     } //if
 
     if ( isBuildingTag() ){
@@ -138,8 +119,6 @@ node(label) {
                         env.BRANCH_NAME )               // image tag = 0.0.1 
                     
         }    
-
-               
     }
 
     printIngress() // ingress info
@@ -166,31 +145,6 @@ def isPushtoFeatureBranch() {
     return ( ! isMaster() && ! isBuildingTag() && ! isPullRequest() )
 }
 
- 
-
-def changeSetOnlyPrtoductionRelease() {
-    def changeLogSets = currentBuild.changeSets
-    def onlyOneFile = false    
-    for (int i = 0; i < changeLogSets.size(); i++) {
-        def entries = changeLogSets[i].items
-        for (int j = 0; j < entries.length; j++) {
-            if ( entries.length == 1 ) { onlyOneFile = true }
-            def files = new ArrayList(entries[j].affectedFiles)
-            for (int k = 0; k < files.size(); k++) {
-                def file = files[k]
-                if (file.path.equals("production-release.txt")  && onlyOneFile ) {
-                    echo "Only production-release.txt has been changed"
-                    return true
-                   }
-               }
-            }
-    }
-
-    return false
-}    
-
-
-
 
 def printIngress() {
  container('kubectl') {
@@ -209,9 +163,7 @@ def deployHelm(name, ns, tag) {
         sh """    
             echo appVersion: $tag >> ./wikiChart/Chart.yaml
 
-            echo tag: ${tag}
-
-            helm upgrade --install $name --debug  ./wikiChart \
+            helm upgrade --install $name ./wikiChart \
             --force \
             --wait \
             --namespace $ns \
