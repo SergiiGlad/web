@@ -4,10 +4,8 @@
  * This pipeline describes a CI/CD process for running Golang app to multi stages environment
  */
 
-
 label = "jenkins-worker-${UUID.randomUUID().toString()}"
 host = "184-172-214-143.nip.io"
-
 
 podTemplate(label: label, yaml: """
 apiVersion: v1
