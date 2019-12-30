@@ -104,7 +104,7 @@ node(label) {
                 echo "Production release controlled by a change to production-release.txt file in application repository root,"
                 echo "containing a git tag that should be released to production environment"
 
-                tagDockerImage = '${sh(script:'cat production-release.txt',returnStdout: true)}'
+                tagDockerImage = '${sh(script:"cat production-release.txt",returnStdout: true)}'
                 //? need check is tag exist
                     
                 deployHelm( "wiki-prod",                      // name chart release
