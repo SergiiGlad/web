@@ -169,20 +169,20 @@ def isPushtoFeatureBranch() {
 def onlyJenkinsfileChangeSet() {
     def onlyOneFile = false
     currentBuild.changeSets.any { changeSet -> 
-    if ( changeSet.items.length == 1 ) { onlyOneFile = true }
-    println "onlyJenkinsfileChangeSet"
-    println "onlyOneFile:"
-    println onlyOneFile
-    changeSet.items.each { entry ->
-        entry.affectedFiles.each { file -> 
-            //if (file.path.equals("production-release.txt") ) {
-                println file.path
-                println "Changed only one production release file"
-               //     return true   
-               // }    
+        if ( changeSet.items.length == 1 ) { onlyOneFile = true }
+        println "onlyJenkinsfileChangeSet"
+        println "onlyOneFile:"
+        println onlyOneFile
+        changeSet.items.each { entry ->
+            entry.affectedFiles.each { file -> 
+                if (file.path.equals("production-release.txt") && onlyOneFile ) {
+                    println file.path
+                    println "Changed only one production release file"
+                   return true   
+                }    
+            }
         }
-    }
-}   
+    }   
 
     return false    
 }
