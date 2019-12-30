@@ -189,7 +189,7 @@ def onlyJenkinsfileChangeSet() {
 }
 
 def changeSetOnlyPrtoductionRelease() {
-    def changeSets = currentBuild.changeSets
+    def changeLogSets = currentBuild.changeSets
         def onlyOneFile = false    
         for (int i = 0; i < changeLogSets.size(); i++) {
            def entries = changeLogSets[i].items
