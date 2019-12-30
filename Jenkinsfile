@@ -106,8 +106,8 @@ node(label) {
                         "develop",                         // namespace
                         env.BRANCH_NAME)                   // image tag = master
                         
-                }
-            }
+        }
+            
     } //if
 
     if ( isBuildingTag() ){
