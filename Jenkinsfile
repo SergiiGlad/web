@@ -173,10 +173,11 @@ def onlyJenkinsfileChangeSet() {
         println "onlyJenkinsfileChangeSet"
         changeSet.items.each { entry ->
             entry.affectedFiles.each { file -> 
-                if (file.path.equals("production-release.txt") && onlyOneFile) {
+               //if (file.path.equals("production-release.txt") ) {
+                    println file.path
                     println "Changed only one production release file"
-                    return true   
-                }    
+               //     return true   
+               // }    
         }
     }
 }   
