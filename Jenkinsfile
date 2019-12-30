@@ -92,9 +92,9 @@ node(label) {
     }
 
     if ( isPushtoFeatureBranch() ) {
-            // exitAsSuccess()
-            currentBuild.result = 'SUCCESS';  
-            return 0
+        // exitAsSuccess()
+        currentBuild.result = 'SUCCESS';  
+        return 0
     }
 
     if ( isMaster()  ) {
