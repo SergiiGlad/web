@@ -173,8 +173,8 @@ def onlyJenkinsfileChangeSet() {
         println "onlyJenkinsfileChangeSet"
         println "onlyOneFile:"
         println onlyOneFile
-        changeSet.items.each { entry ->
-            entry.affectedFiles.each { file -> 
+        changeSet.items.any { entry ->
+            entry.affectedFiles.any { file -> 
                 if (file.path.equals("production-release.txt") && onlyOneFile ) {
                     println file.path
                     println "Changed only one production release file"
@@ -185,7 +185,7 @@ def onlyJenkinsfileChangeSet() {
     }   
 
     echo "last section"
-    return false    
+    return false   
 }
 
 def isChangeSet() {
