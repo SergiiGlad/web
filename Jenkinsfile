@@ -170,6 +170,7 @@ def onlyJenkinsfileChangeSet() {
     def onlyOneFile = false
         currentBuild.changeSets.any { changeSet -> 
         if ( changeSet.items.length == 1 ) { onlyOneFile = true }
+        println "onlyJenkinsfileChangeSet"
         changeSet.items.each { entry ->
             entry.affectedFiles.each { file -> 
                 if (file.path.equals("production-release.txt") && onlyOneFile) {
