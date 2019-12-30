@@ -107,8 +107,8 @@ node(label) {
                 tagDockerImage = "${sh(script:'cat production-release.txt',returnStdout: true)}"
                 //? need check is tag exist
                     
-                deployHelm( "wiki-prod",                      // name chart release
-                            "prod",                           // namespace
+                deployHelm( "wiki-prod",                 // name chart release
+                            "prod",                      // namespace
                             tagDockerImage )             // image tag from file production-release.txt
                     
                 } //stage   
@@ -166,53 +166,26 @@ def isPushtoFeatureBranch() {
     return ( ! isMaster() && ! isBuildingTag() && ! isPullRequest() )
 }
 
-def onlyJenkinsfileChangeSet() {
-    def onlyOneFile = false
-    currentBuild.changeSets.any { changeSet -> 
-        if ( changeSet.items.length == 1 ) { onlyOneFile = true }
-        println "onlyJenkinsfileChangeSet"
-        println "onlyOneFile:"
-        println onlyOneFile
-        changeSet.items.any { entry ->
-            entry.affectedFiles.any { file -> 
-                if (file.path.equals("production-release.txt") && onlyOneFile ) {
-                    println file.path
-                    println "Changed only one production release file"
-                   return true   
-                }    
-            }
-        }
-    }   
-
-    echo "last section"
-    return false   
-}
+ 
 
 def changeSetOnlyPrtoductionRelease() {
     def changeLogSets = currentBuild.changeSets
-        def onlyOneFile = false    
-        for (int i = 0; i < changeLogSets.size(); i++) {
-           def entries = changeLogSets[i].items
-           for (int j = 0; j < entries.length; j++) {
-               if ( entries.length == 1 ) { onlyOneFile = true }
-               def files = new ArrayList(entries[j].affectedFiles)
-                println "affectedFiles"
-                println files[0].path
-                println files.path
-                             
-               for (int k = 0; k < files.size(); k++) {
-                   def file = files[k]
-                   println k
-                   println file
-                   if (file.path.equals("production-release.txt")  && onlyOneFile ) {
-                        echo "Only production-release.txt changed"
-                        return true
+    def onlyOneFile = false    
+    for (int i = 0; i < changeLogSets.size(); i++) {
+        def entries = changeLogSets[i].items
+        for (int j = 0; j < entries.length; j++) {
+            if ( entries.length == 1 ) { onlyOneFile = true }
+            def files = new ArrayList(entries[j].affectedFiles)
+            for (int k = 0; k < files.size(); k++) {
+                def file = files[k]
+                if (file.path.equals("production-release.txt")  && onlyOneFile ) {
+                    echo "Only production-release.txt has been changed"
+                    return true
                    }
                }
             }
     }
 
-    println "last section"
     return false
 }    
 
