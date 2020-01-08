@@ -131,7 +131,7 @@ def printIngress() {
     
         sh 'kubectl get ing --all-namespaces'
         
-        }
+        } 
     }     
 }
 
