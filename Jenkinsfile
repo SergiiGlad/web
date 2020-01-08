@@ -98,7 +98,7 @@ node(label) {
     }
 
     stage('Deploy') {
-     build job: 'web-delivery', wait: true
+     build job: 'web-delivery', wait: true, parameters: [string(name: 'BRANCH_NAME1', value: 'env.BRANCH_NAME')]
     } 
 
   
