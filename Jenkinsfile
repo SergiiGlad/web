@@ -130,6 +130,7 @@ def printIngress() {
     withKubeConfig([credentialsId: 'kubeconfig']) {
     
         sh 'kubectl get ing --all-namespaces'
+        
         }
     }     
 }
