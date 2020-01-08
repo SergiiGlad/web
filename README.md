@@ -40,3 +40,14 @@ https://www.digitalocean.com/community/tutorials/customizing-go-binaries-with-bu
 # Go (Golang) GOOS and GOARCH
 
 https://gist.github.com/asukakenji/f15ba7e588ac42795f421b48b8aede63#go-golang-goos-and-goarch
+
+## Edit Jenkins password
+
+###### # echo -n password | base64
+###### # kubectl edit secret/jenkins
+###### # kubectl delete pod/jenkins-name
+
+## A Kubeconfig file to gain access to a Kubernetes cluster
+
+<https://developer.ibm.com/tutorials/configure-a-cicd-pipeline-with-jenkins-on-kubernetes/>
+

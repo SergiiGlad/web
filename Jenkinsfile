@@ -6,7 +6,7 @@
 
 
 label = "jenkins-worker-${UUID.randomUUID().toString()}"
-host = "184-172-214-143.nip.io"
+host = "173-193-102-57.nip.io"
 
 
 podTemplate(label: label, yaml: """
@@ -68,8 +68,9 @@ node(label) {
     stage('Docker build') {
       container('docker-dind') {
            sh """
-                    docker build . -t $dockerImage
+                    
            """
+           //docker build . -t $dockerImage
         }
     }
 
@@ -85,8 +86,9 @@ node(label) {
           sh 'docker image ls'
           withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
                 sh """
-                    docker push $dockerImage
+                    
                 """
+                // docker push $dockerImage
           }
         }
     }
@@ -97,32 +99,11 @@ node(label) {
         return 0
     }
 
-    if ( isMaster()  ) {
-        stage('Deploy development version') {
-            echo "Every commit to master branch is a dev release"
-            echo "Its push to master"
-                               
-            deployHelm( "wiki-dev",                        // name chart release
-                        "develop",                         // namespace
-                        env.BRANCH_NAME)                   // image tag = master
-                        
-        }
-            
-    } //if
+    stage('Deploy') {
+     build job: 'web-delivery', wait: true
+    } 
 
-    if ( isBuildingTag() ){
-        stage('Deploy to QA stage') {
-            echo "Every git tag on a master branch is a QA release"
-
-            deployHelm( "wiki-qa",                      // name chart release
-                        "qa",                           // namespace
-                        env.BRANCH_NAME )               // image tag = 0.0.1 
-                    
-        }    
-    }
-
-    printIngress() // ingress info
-
+  
   }// node
 } //podTemplate
 
