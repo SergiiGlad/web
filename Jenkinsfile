@@ -55,9 +55,9 @@ node(label) {
     }
       
     //
-    // BRANCH_NAME = master  - master branch
+    // BRANCH_NAME = master  - push to master
     // BRANCH_NAME = PR-1    - pull request
-    // BRANCH_NAME = develop - other branch
+    // BRANCH_NAME = develop - push to other branch
     // BRANCH_NAME = 0.0.1  - git tag
     //
     
@@ -72,12 +72,7 @@ node(label) {
         }
     }
 
-    if ( isPullRequest() ) {
-        // exitAsSuccess()
-        currentBuild.result = 'SUCCESS';  
-        return 0
-    }
-
+   
     stage ('Docker push') {
         container('docker-dind') {
 
@@ -91,21 +86,19 @@ node(label) {
         }
     }
 
-    if ( isPushtoFeatureBranch() ) {
+    if ( ! isMaster() || ! isBuildingTag() ) {
         // exitAsSuccess()
         currentBuild.result = 'SUCCESS';  
         return 0
     }
 
-    shortCommit = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim() 
 
     GIT_COMMIT = sh(returnStdout: true, script: "git rev-parse HEAD").trim()
 
     stage('Deploy') {
      build job: 'web-delivery', wait: true, 
-     parameters: [string(name: 'BRANCH_NAME1', value: env.BRANCH_NAME),
-                  string(name: 'shortCommit1', value: shortCommit),
-                  string(name: 'GIT_COMMIT1', value: GIT_COMMIT)]
+     parameters: [string(name: 'BRANCH_NAME', value: env.BRANCH_NAME),
+                  string(name: 'GIT_COMMIT', value: GIT_COMMIT)]
     } 
 
   
@@ -132,39 +125,6 @@ def isPushtoFeatureBranch() {
 }
 
 
-def printIngress() {
- container('kubectl') {
-    withKubeConfig([credentialsId: 'kubeconfig']) {
-    
-        sh 'kubectl get ing --all-namespaces'
-        
-        } 
-    }     
-}
 
-def deployHelm(name, ns, tag) {
-
-     container('helm') {
-        withKubeConfig([credentialsId: 'kubeconfig']) {
-        sh """    
-            echo appVersion: $tag >> ./wikiChart/Chart.yaml
-
-            helm upgrade --install $name ./wikiChart \
-            --force \
-            --wait \
-            --namespace $ns \
-            --set image.name=$dockerImage \
-            --set appVer=$tag \
-            --set ingress.hostName="${name}.${host}" \
-            --set ingress.tls[0].hosts[0]="${name}.${host}" \
-            --set ingress.tls[0].secretName="acme-${name}-tls" \
-
-            helm ls
-        """
-    
-        }
-    }    
-
-}
 
 
