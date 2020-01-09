@@ -92,7 +92,6 @@ node(label) {
         return 0
     }
 
-
     GIT_COMMIT = sh(returnStdout: true, script: "git rev-parse HEAD").trim()
 
     stage('Deploy') {
