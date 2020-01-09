@@ -99,7 +99,7 @@ node(label) {
 
     shortCommit = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim() 
 
-    sh 'git rev-parse HEAD > GIT_COMMIT'
+    GIT_COMMIT = sh(returnStdout: true, script: "git rev-parse HEAD").trim()
 
     stage('Deploy') {
      build job: 'web-delivery', wait: true, 
