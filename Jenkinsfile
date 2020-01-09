@@ -86,7 +86,7 @@ node(label) {
         }
     }
 
-    if ( ! isMaster() || ! isBuildingTag() ) {
+    if ( ! isMaster() && ! isBuildingTag() ) {
         // exitAsSuccess()
         currentBuild.result = 'SUCCESS';  
         return 0
