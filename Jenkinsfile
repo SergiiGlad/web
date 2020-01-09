@@ -97,8 +97,12 @@ node(label) {
         return 0
     }
 
+    shortCommit = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim() 
+
     stage('Deploy') {
-     build job: 'web-delivery', wait: true, parameters: [string(name: 'BRANCH_NAME1', value: env.BRANCH_NAME)]
+     build job: 'web-delivery', wait: true, 
+     parameters: [string(name: 'BRANCH_NAME1', value: env.BRANCH_NAME),
+                  string(name: 'shortCommit1', value: shortCommit)]
     } 
 
   
