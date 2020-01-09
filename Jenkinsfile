@@ -99,12 +99,13 @@ node(label) {
 
     shortCommit = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim() 
 
-    sh 'printenv | sort'
+    sh 'git rev-parse HEAD > GIT_COMMIT'
 
     stage('Deploy') {
      build job: 'web-delivery', wait: true, 
      parameters: [string(name: 'BRANCH_NAME1', value: env.BRANCH_NAME),
-                  string(name: 'shortCommit1', value: shortCommit)]
+                  string(name: 'shortCommit1', value: shortCommit),
+                  string(name: 'GIT_COMMIT1', value: GIT_COMMIT)]
     } 
 
   
