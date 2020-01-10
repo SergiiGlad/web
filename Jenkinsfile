@@ -106,7 +106,7 @@ node(label) {
 
 // is Push to master branch
 def isMaster() {
-    return (env.BRANCH_NAME == 'master' )
+    return (env.BRANCH_NAME == "master" )
 }
 
 def isPullRequest() {
