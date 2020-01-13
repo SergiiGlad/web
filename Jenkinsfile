@@ -71,7 +71,9 @@ spec:
 
     def dockerTag = env.BRANCH_NAME 
     
-   // if ( isMaster() ) { dockerTag = shortCommit}
+    if ( isMaster() ) { 
+        dockerTag = shortCommit 
+    }
 
     echo "dockerTag: $dockerTag"
 
