@@ -5,7 +5,8 @@
  */
 
 label = "jenkins-worker-${UUID.randomUUID().toString()}"
-host = "173-193-102-57.nip.io"
+def host = "173-193-102-57.nip.io"
+def dockerImage = 'sergeyglad/wiki'
 
 podTemplate(label: label, yaml: """
 apiVersion: v1
@@ -60,18 +61,33 @@ node(label) {
     // BRANCH_NAME = develop - push to other branch
     // BRANCH_NAME = 0.0.1  - git tag
     //
+
+    sh 'printenv | sort'
+
+    GIT_COMMIT = sh(returnStdout: true, script: "git rev-parse HEAD").trim()
     
-    dockerImage = 'sergeyglad/wiki:' + env.BRANCH_NAME
+    def shortCommit = $GIT_COMIIT[7]
+    def dockerTag = env.BRANCH_NAME 
+
+    if ( isMaster() ) {
+      dockerTag = shortCommit
+    }
    
     stage('Docker build') {
       container('docker-dind') {
            sh """
-                    
+               echo "Docker build $dockerImage:$dockerTag"     
            """
-           //docker build . -t $dockerImage
+           //docker build . -t $dockerImage:$dockerTag
         }
     }
 
+    if ( isPullRequest() ) {
+        // exitAsSuccess()
+        echo "It's pull request and we don't push image to docker hub"
+        currentBuild.result = 'SUCCESS';  
+        return 0
+    }
    
     stage ('Docker push') {
         container('docker-dind') {
@@ -79,7 +95,7 @@ node(label) {
           sh 'docker image ls'
           withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
                 sh """
-                    
+                    echo "Docker push to docker hub $dockerImage:$dockerTag"
                 """
                 // docker push $dockerImage
           }
@@ -92,8 +108,7 @@ node(label) {
         return 0
     }
 
-    GIT_COMMIT = sh(returnStdout: true, script: "git rev-parse HEAD").trim()
-
+    
     stage('Deploy') {
      build job: 'web-delivery', wait: true, 
      parameters: [string(name: 'BRANCH_NAME', value: env.BRANCH_NAME),
@@ -116,7 +131,7 @@ def isPullRequest() {
 def isBuildingTag() {
 
     // add check that  is branch master?
-    return ( env.BRANCH_NAME ==~ /^\d.\d.\d$/ )
+    return ( env.BRANCH_NAME ==~ /^\d{1}.\d{1}.\d{1}$/ )
 }
 
 def isPushtoFeatureBranch() {
