@@ -4,11 +4,11 @@
  * This pipeline describes a CI/CD process for running Golang app to multi stages environment
  */
 
-label = "jenkins-worker-${UUID.randomUUID().toString()}"
+def podLabel = "jenkins-worker-${UUID.randomUUID().toString()}"
 def host = "173-193-102-57.nip.io"
 def dockerImage = 'sergeyglad/wiki'
 
-podTemplate(label: label, yaml: """
+podTemplate(label: podLabel, yaml: """
 apiVersion: v1
 kind: Pod
 spec:
@@ -35,7 +35,7 @@ spec:
  """
   ) {
 
-node(label) {
+  node(podLable) {
 
     stage('Checkout SCM') {
         checkout scm
@@ -70,18 +70,16 @@ node(label) {
 
     def dockerTag = env.BRANCH_NAME 
     
-    if ( isMaster() ) {
-      dockerTag = shortCommit
-    }
+   // if ( isMaster() ) { dockerTag = shortCommit}
 
     echo "dockerTag: $dockerTag"
-    
+
     stage('Docker build') {
       container('docker-dind') {
            sh """
-               echo "Docker build $dockerImage:$dockerTag"     
+              docker build . -t $dockerImage:$dockerTag    
            """
-           //docker build . -t $dockerImage:$dockerTag
+           //
         }
     }
 
@@ -98,9 +96,9 @@ node(label) {
           sh 'docker image ls'
           withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
                 sh """
-                    echo "Docker push to docker hub $dockerImage:$dockerTag"
+                    docker push $dockerImage:$dockerTag
                 """
-                // docker push $dockerImage
+                
           }
         }
     }
