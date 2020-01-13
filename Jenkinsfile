@@ -4,9 +4,11 @@
  * This pipeline describes a CI/CD process for running Golang app to multi stages environment
  */
 
+
 def podLabel = "jenkins-worker-${UUID.randomUUID().toString()}"
 def host = "173-193-102-57.nip.io"
 def dockerImage = 'sergeyglad/wiki'
+
 
 podTemplate(label: podLabel, yaml: """
 apiVersion: v1
@@ -34,6 +36,7 @@ spec:
       - "cat"
  """
   ) {
+golangTemplate(podLabel) {
 
   node(podLable) {
 
