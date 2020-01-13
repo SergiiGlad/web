@@ -36,8 +36,6 @@ spec:
       - "cat"
  """
   ) {
-golangTemplate(podLabel) {
-
   node(podLable) {
 
     stage('Checkout SCM') {
