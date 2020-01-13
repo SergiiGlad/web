@@ -64,7 +64,7 @@ node(label) {
 
     GIT_COMMIT = sh(returnStdout: true, script: "git rev-parse HEAD").trim()
     
-    def shortCommit = $GIT_COMMIT[7]
+    def shortCommit = GIT_COMMIT[7]
     def dockerTag = env.BRANCH_NAME 
 
     if ( isMaster() ) {
