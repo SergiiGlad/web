@@ -74,8 +74,6 @@ spec:
         dockerTag = shortCommit 
     }
 
-    echo "dockerTag: $dockerTag"
-
     stage('Docker build') {
       container('docker-dind') {
            sh """
@@ -135,10 +133,6 @@ def isBuildingTag() {
 
     // add check that  is branch master?
     return ( env.BRANCH_NAME ==~ /^\d{1}.\d{1}.\d{1}$/ )
-}
-
-def isPushtoFeatureBranch() {
-    return ( ! isMaster() && ! isBuildingTag() && ! isPullRequest() )
 }
 
 
