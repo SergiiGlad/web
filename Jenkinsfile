@@ -65,16 +65,17 @@ node(label) {
     GIT_COMMIT = sh(returnStdout: true, script: "git rev-parse HEAD").trim()
     echo "GIT_COMMIT: $GIT_COMMIT"
     
-    def shortCommit = GIT_COMMIT.take(6)
+    def shortCommit = GIT_COMMIT.take(7)
     echo "shortCommit: $shortCommit"
 
     def dockerTag = env.BRANCH_NAME 
-    echo "dockerTag: $dockerTag"
-
+    
     if ( isMaster() ) {
       dockerTag = shortCommit
     }
-   
+
+    echo "dockerTag: $dockerTag"
+    
     stage('Docker build') {
       container('docker-dind') {
            sh """
