@@ -68,11 +68,12 @@ spec:
     def shortCommit = GIT_COMMIT.take(7)
     echo "shortCommit: $shortCommit"
 
-    def dockerTag = env.BRANCH_NAME 
+    def dockerTag
     
     if ( isMaster() ) { 
         dockerTag = shortCommit 
-    }
+    } else
+        dockerTag = env.BRANCH_NAME 
 
     stage('Docker build') {
       container('docker-dind') {
