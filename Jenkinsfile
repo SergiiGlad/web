@@ -36,7 +36,7 @@ spec:
       - "cat"
  """
   ) {
-  node(podLable) {
+  node(podLabel) {
 
     stage('Checkout SCM') {
         checkout scm
