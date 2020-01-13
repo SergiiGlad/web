@@ -25,7 +25,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: "INPUT_VERSION"
-              value: "{{ .Values.image.tag }}"
+              value: {{ .Values.image.tag | quote }}
           ports:
             - name: http
               containerPort: 3000
