@@ -104,7 +104,7 @@ spec:
         }
     }
 
-    if ( ! isMaster() && ! isBuildingTag() ) {
+    if ( ! isMaster( env.BRANCH_NAME ) && ! isBuildingTag() ) {
         // exitAsSuccess()
         currentBuild.result = 'SUCCESS';  
         return 0
@@ -122,8 +122,8 @@ spec:
 } //podTemplate
 
 // is Push to master branch
-def isMaster() {
-    return (env.BRANCH_NAME == "master" )
+def isMaster(name) {
+    return name == "master" 
 }
 
 def isPullRequest() {
