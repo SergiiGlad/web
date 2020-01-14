@@ -29,12 +29,7 @@ spec:
     tty: true
     command:
       - "cat"
-  - name: kubectl
-    image: lachlanevenson/k8s-kubectl:v1.16.4
-    tty: true
-    command:
-      - "cat"
- """
+"""
   ) {
   node(podLabel) {
 
@@ -62,23 +57,18 @@ spec:
     // BRANCH_NAME = develop - push to other branch
     // BRANCH_NAME = 0.0.1  - git tag
     
-    GIT_COMMIT = sh(returnStdout: true, script: "git rev-parse HEAD").trim()
-    echo "GIT_COMMIT: $GIT_COMMIT"
-    
-    def shortCommit = GIT_COMMIT.take(7)
-    echo "shortCommit: $shortCommit"
-
-    def dockerTag
+    def dockerTag = env.BRANCH_NAME
     
     if ( isMaster() ) { 
-        dockerTag = shortCommit 
-    } else
-        dockerTag = env.BRANCH_NAME 
+       // short commit
+       dockerTag = sh(returnStdout: true, script: "git rev-parse HEAD").trim().take(7)
+    } 
+  
 
     stage('Docker build') {
       container('docker-dind') {
            sh """
-              docker build . -t $dockerImage:$dockerTag    
+              docker build . -t $dockerImage:$dockerTag   
            """
            //
         }
@@ -112,9 +102,9 @@ spec:
 
     
     stage('Deploy') {
-     build job: 'web-delivery', wait: true, 
-     parameters: [string(name: 'BRANCH_NAME', value: env.BRANCH_NAME),
-                  string(name: 'GIT_COMMIT', value: GIT_COMMIT)]
+     build job: 'web-delivery',
+     parameters: [string(name: 'dockerTag', value: dockerTag, description: 'git tag or short commit' )
+                 
     } 
 
   
@@ -133,7 +123,7 @@ def isPullRequest() {
 def isBuildingTag() {
 
     // add check that  is branch master?
-    return ( env.BRANCH_NAME ==~ /^\d{1}.\d{1}.\d{1}$/ )
+    return ( env.BRANCH_NAME ==~ /^\d+.\d+.\d+$/ )
 }
 
 
