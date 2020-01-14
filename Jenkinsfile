@@ -123,7 +123,7 @@ spec:
 
 // is Push to master branch
 def isMaster(name) {
-    return name == "master" 
+    return (name == "master") 
 }
 
 def isPullRequest() {
