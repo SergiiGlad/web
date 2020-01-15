@@ -15,6 +15,7 @@ import (
   "os"
 )
 
+
 func handler(w http.ResponseWriter, r *http.Request) {
     name := "Golang"
     if len(r.URL.Path[1:]) != 0 {
