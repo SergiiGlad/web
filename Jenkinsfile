@@ -67,7 +67,7 @@ spec:
 		}
 
 		if ( isPullRequest() ) {
-		// exitAsSuccess()
+			// exitAsSuccess()
 			echo "It's pull request and we don't push image to docker hub"
 			currentBuild.result = 'SUCCESS';  
 			return 0
