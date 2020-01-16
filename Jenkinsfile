@@ -93,17 +93,16 @@ spec:
 	}// node
 } //podTemplate
 
-// is Push to master branch
 def isMaster() {
-    return (env.BRANCH_NAME  == "master") 
+  return (env.BRANCH_NAME  == "master") 
 }
 
 def isPullRequest() {
-    return (env.BRANCH_NAME ==~  /^PR-\d+$/)
+  return (env.BRANCH_NAME ==~  /^PR-\d+$/)
 }
 
 def isBuildingTag() {
-    return ( env.BRANCH_NAME ==~ /^\d+\.\d+\.\d+$/ )
+  return ( env.BRANCH_NAME ==~ /^\d+\.\d+\.\d+$/ )
 }
 
 
