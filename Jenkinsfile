@@ -30,75 +30,71 @@ spec:
     command:
       - "cat"
 """
-  ) {
-  node(podLabel) {
+){
+    node(podLabel) {
 
-    stage('Checkout SCM') {
-        checkout scm
-    }
-
-    stage('Build  Golang app') {
-        container('golang') {
-            echo "Build Golang app"
-            sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-w -s" -o main .'
+        stage('Checkout application SCM') {
+            checkout scm
         }
-    }
 
-    stage ('Unit test Golang app')  {
-        container('golang') {
-            echo "Unit test Golang app"
-            sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go test -v .'
+        stage('Build  Golang app') {
+            container('golang') {
+                echo "Build Golang app"
+                sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-w -s" -o main .'
+            }
         }
-    }
-      
+
+        stage ('Unit test Golang app')  {
+            container('golang') {
+                echo "Unit test Golang app"
+                sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go test -v .'
+            }
+        }
+        
+        
+        // BRANCH_NAME = master  - push to master
+        // BRANCH_NAME = PR-1    - pull request
+        // BRANCH_NAME = develop - push to other branch
+        // BRANCH_NAME = 0.0.1  - git tag
+        
+        def dockerTag = env.BRANCH_NAME
+        
+        if ( isMaster() ) { 
+            // short commit
+            dockerTag = sh(returnStdout: true, script: "git rev-parse HEAD").trim().take(7)
+        } 
     
-    // BRANCH_NAME = master  - push to master
-    // BRANCH_NAME = PR-1    - pull request
-    // BRANCH_NAME = develop - push to other branch
-    // BRANCH_NAME = 0.0.1  - git tag
+        stage('Docker build') {
+            container('docker-dind') {
+                sh "docker build . -t $dockerImage:$dockerTag"
+            }
+        }
+
+        if ( isPullRequest() ) {
+            // exitAsSuccess()
+            echo "It's pull request and we don't push image to docker hub"
+            currentBuild.result = 'SUCCESS';  
+            return 0
+        }
     
-    def dockerTag = env.BRANCH_NAME
+        stage ('Docker push') {
+            container('docker-dind') {
+                sh 'docker image ls'
+                withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
+                    sh "docker push $dockerImage:$dockerTag"
+                }
+            }
+        }
+
+        if ( isMaster() || isBuildingTag() ) {
+            stage('Deploy') {
+                build job: 'web-delivery',
+                parameters: [string(name: 'dockerTag', value: dockerTag, description: 'git tag or short commit' )]
+            }
+        } 
+
     
-    if ( isMaster() ) { 
-       // short commit
-       dockerTag = sh(returnStdout: true, script: "git rev-parse HEAD").trim().take(7)
-    } 
-  
-
-    stage('Docker build') {
-      container('docker-dind') {
-           sh "docker build . -t $dockerImage:$dockerTag"
-           
-        }
-    }
-
-    if ( isPullRequest() ) {
-        // exitAsSuccess()
-        echo "It's pull request and we don't push image to docker hub"
-        currentBuild.result = 'SUCCESS';  
-        return 0
-    }
-   
-    stage ('Docker push') {
-        container('docker-dind') {
-
-          sh 'docker image ls'
-          withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-                sh "docker push $dockerImage:$dockerTag"
-                
-          }
-        }
-    }
-
-    if ( isMaster() || isBuildingTag() ) {
-        stage('Deploy') {
-            build job: 'web-delivery',
-            parameters: [string(name: 'dockerTag', value: dockerTag, description: 'git tag or short commit' )]
-        }
-    } 
-
-  
-  }// node
+    }// node
 } //podTemplate
 
 // is Push to master branch
@@ -111,9 +107,7 @@ def isPullRequest() {
 }
 
 def isBuildingTag() {
-
-    // add check that  is branch master?
-    return ( env.BRANCH_NAME ==~ /^\d+.\d+.\d+$/ )
+    return ( env.BRANCH_NAME ==~ /^\d+\.\d+\.\d+$/ )
 }
 
 
