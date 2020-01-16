@@ -67,10 +67,8 @@ spec:
 
     stage('Docker build') {
       container('docker-dind') {
-           sh """
-              docker build . -t $dockerImage:$dockerTag   
-           """
-           //
+           sh "docker build . -t $dockerImage:$dockerTag"
+           
         }
     }
 
@@ -86,24 +84,16 @@ spec:
 
           sh 'docker image ls'
           withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-                sh """
-                    docker push $dockerImage:$dockerTag
-                """
+                sh "docker push $dockerImage:$dockerTag"
                 
           }
         }
     }
 
-    if ( ! isMaster() && ! isBuildingTag() ) {
-        // exitAsSuccess()
-        currentBuild.result = 'SUCCESS';  
-        return 0
-    }
-
-    
-    stage('Deploy') {
-      build job: 'web-delivery',
-      parameters: [string(name: 'dockerTag', value: dockerTag, description: 'git tag or short commit' )]
+    if ( isMaster() || isBuildingTag() ) {
+        stage('Deploy') {
+            build job: 'web-delivery',
+            parameters: [string(name: 'dockerTag', value: dockerTag, description: 'git tag or short commit' )]
     } 
 
   
