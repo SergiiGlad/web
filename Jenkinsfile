@@ -84,7 +84,7 @@ spec:
 
 		if ( isMaster() || isBuildingTag() ) {
 			stage('Helm package'){
-				container('docker-dind') {
+				container('helm') {
 				  sh 'helm package --debug wiki'
 				}
 			}
