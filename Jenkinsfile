@@ -54,7 +54,6 @@ spec:
 		// BRANCH_NAME = PR-1    - pull request
 		// BRANCH_NAME = develop - push to other branch
 		// BRANCH_NAME = 0.0.1  - git tag
-						
 		def dockerTag = env.BRANCH_NAME
 						
 		if ( isMaster() ) dockerTag = sh(returnStdout: true, script: "git rev-parse HEAD").trim().take(7) //short commit
