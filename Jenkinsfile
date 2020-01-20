@@ -83,6 +83,11 @@ spec:
 		}
 
 		if ( isMaster() || isBuildingTag() ) {
+			stage('Helm package'){
+				container('docker-dind') {
+				  sh 'helm package --debug wiki'
+				}
+			}
 			stage('Deploy') {
 				build job: 'web-delivery',
 				parameters: [string(name: 'dockerTag', value: dockerTag, description: 'git tag or short commit')]
