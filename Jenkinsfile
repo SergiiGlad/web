@@ -12,7 +12,7 @@ def host = "173-193-102-57.nip.io"
 def dockerImage = 'sergeyglad/wiki'
 
 
-golangTemplate( podLabel ) {){
+golangTemplate( podLabel ){
 	node(podLabel) {
 
 		stage('Checkout application SCM') {
