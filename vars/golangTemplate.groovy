@@ -1,5 +1,5 @@
 def call(String podLabel, code) { podTemplate(
-    cloud: 'ibm k8s',
+    cloud: 'kubernetes',
     namespace: 'jenkins',
     label: podLabel,
     containers: [
@@ -7,7 +7,14 @@ def call(String podLabel, code) { podTemplate(
         name: 'golang',
         image: 'golang:1.13.0-alpine',
         ttyEnabled: true,
-        command: 'cat')
+        command: 'cat'),
+      containerTemplate(
+        name: 'docker-dind',
+        image: 'docker:stable-dind',
+        ttyEnabled: true,
+        command: 'cat'),
 ]) {
 code() }
 }
+
+
