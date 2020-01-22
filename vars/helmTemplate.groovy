@@ -1,5 +1,5 @@
 def call(String podLabel, code) { podTemplate(
-    cloud: 'ibm-k8s',
+    cloud: 'kubernetes,
     namespace: 'jenkins',
     label: podLabel,
     containers: [
