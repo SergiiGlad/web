@@ -4,15 +4,31 @@
  * This pipeline describes a CI/CD process for running Golang app to multi stages environment
  */
 
-@Library('libs-shared') _
-
-
 def podLabel = "jenkins-worker-${UUID.randomUUID().toString()}"
 def host = "173-193-102-57.nip.io"
 def dockerImage = 'sergeyglad/wiki'
 
 
-golangTemplate( podLabel ){
+podTemplate(label: podLabel, yaml: """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: golang
+    image: golang:1.13.0-alpine
+    command:
+      - "cat"
+    tty: true
+  - name: docker-dind
+    image: docker:stable-dind
+    securityContext:
+      privileged: true
+  - name: helm
+    image: lachlanevenson/k8s-helm:v2.16.1
+    tty: true
+    command:
+      - "cat"
+"""){
 	node(podLabel) {
 
 		stage('Checkout application SCM') {
@@ -70,8 +86,6 @@ golangTemplate( podLabel ){
 				parameters: [string(name: 'dockerTag', value: dockerTag, description: 'git tag or short commit')]
 			}
 		} 
-
-			
 	}// node
 } //podTemplate
 
