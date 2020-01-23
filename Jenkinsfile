@@ -83,7 +83,7 @@ spec:
 		if ( isMaster() || isBuildingTag() ) {
 			stage('Deploy') {
 				build job: 'web-delivery',
-				parameters: [string(name: 'dockerTag', value: dockerTag, description: 'git tag or short commit')]
+				parameters: [string(name: 'dockerTag', value: dockerTag)]
 			}
 		} 
 	}// node
