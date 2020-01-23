@@ -48,16 +48,16 @@ spec:
 				sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go test -v .'
 			}
 		}
-					
+
 		// BRANCH_NAME = master  - push to master
 		// BRANCH_NAME = PR-1    - pull request
 		// BRANCH_NAME = develop - push to other branch
 		// BRANCH_NAME = 0.0.1  - git tag
 		def dockerTag = env.BRANCH_NAME
-						
+
 		if ( isMaster() ) dockerTag = sh(returnStdout: true, script: "git rev-parse HEAD").trim().take(7) //short commit
 
-				
+
 		stage('Docker build') {
 			container('docker-dind') {
 				sh "docker build . -t $dockerImage:$dockerTag"
@@ -67,10 +67,10 @@ spec:
 		if ( isPullRequest() ) {
 			// exitAsSuccess()
 			echo "It's pull request and we don't push image to docker hub"
-			currentBuild.result = 'SUCCESS';  
+			currentBuild.result = 'SUCCESS';
 			return 0
 		}
-				
+
 		stage ('Docker push') {
 			container('docker-dind') {
 				sh 'docker image ls'
@@ -82,15 +82,14 @@ spec:
 
 		if ( isMaster() || isBuildingTag() ) {
 			stage('Deploy') {
-				build job: 'web-delivery',
-				parameters: [string(name: 'dockerTag', value: dockerTag)]
+				build job: 'web-delivery', parameters: [string(name: 'dockerTag', value: dockerTag)]
 			}
-		} 
+		}
 	}// node
 } //podTemplate
 
 def isMaster() {
-  return (env.BRANCH_NAME  == "master") 
+  return (env.BRANCH_NAME  == "master")
 }
 
 def isPullRequest() {
@@ -100,8 +99,3 @@ def isPullRequest() {
 def isBuildingTag() {
   return ( env.BRANCH_NAME ==~ /^\d+\.\d+\.\d+$/ )
 }
-
-
-
-
-

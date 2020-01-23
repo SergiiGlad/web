@@ -20,7 +20,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
     if len(r.URL.Path[1:]) != 0 {
       name = r.URL.Path[1:]
       }
-    fmt.Fprintf(w, "Tuesday, Hi there %s!\n", name )
+    fmt.Fprintf(w, "Tuesday, afternoon, Hi there %s!\n", name )
     fmt.Fprintf(w, "Version: %s!\n", os.Getenv("INPUT_VERSION") )
 }
 
