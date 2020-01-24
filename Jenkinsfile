@@ -1,4 +1,4 @@
-#!/usr/bin/env groovy
+#!groovy
 
 /**
  * This pipeline describes a CI/CD process for running Golang app to multi stages environment
