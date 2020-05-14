@@ -1,3 +1,13 @@
+# CI/CD
+
+Jenkins Pipeline should follow this workflow:
+	•	Every commit to master branch is a dev release
+	•	Every git tag on a master branch is a QA release
+	•	Production release controlled by a change to production-release.txt file in application repository root, containing a git tag that should be released to production environment
+	•	Every branch that is not also a PR should have build, test, docker image build, docker image push steps with docker image tag = branch name
+	•	Every PR should have build, test, docker image build, docker image push steps with docker tag = pr-number
+
+
 ## Go Simple Web Server in docker container
 
 ### go building example
